@@ -24,7 +24,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ### Name and Affiliations of lead investigators
 
-  1. Chebana Fateh
+  1. Fateh Chebana
   
      Affiliation: Institut National de Santé Publique du Québec (?)
 
