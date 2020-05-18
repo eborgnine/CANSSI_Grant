@@ -7,6 +7,11 @@ output:
     highlight: textmate
     theme: united
 bibliography: CANSSI_Grant.bib
+geometry: margin=1in 
+mainfont: Times New Roman
+fontsize: 12pt
+documentclass: article
+classoption: letterpaper
 ---
 
 ```{r setup, include=FALSE}
