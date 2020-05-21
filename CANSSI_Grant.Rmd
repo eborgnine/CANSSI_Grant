@@ -1,18 +1,18 @@
 ---
 title: "CANSSI Grant Proposal (Early Draft)"
 output:
-  pdf_document: 
+  pdf_document:
     latex_engine: xelatex
-  html_document:
-    highlight: textmate
-    theme: united
+header-includes:
+  - \usepackage{fontspec}
 bibliography: CANSSI_Grant.bib
 geometry: margin=1in 
-mainfont: Times New Roman
 fontsize: 12pt
 documentclass: article
 classoption: letterpaper
 ---
+
+\setmainfont{Calibri}
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -24,45 +24,42 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ### Name and Affiliations of lead investigators
 
-  1. Fateh Chebana
+  1. Patrick Brown
+
+     Affiliation: Centre for Global Health Research, St. Michael's Hospital
+     
+     Affiliation: Department of Statistical Sciences, University of Toronto
+
+  2. Fateh Chebana
   
-     Affiliation: Institut National de Santé Publique du Québec (?)
+     Affiliation: Institut national de la recherche scientifique (INRS)
 
   2. Cindy Feng 
   
      Affiliation: School of Epidemiology and Public Health, University of Ottawa
 
-  3. Patrick Brown
+
+
+### List of proposed callaborators, titles, and affiliations
+
+  1. Kamal Rai
 
      Affiliation: Centre for Global Health Research, St. Michael's Hospital
      
      Affiliation: Department of Statistical Sciences, University of Toronto
 
 
-
-### List of proposed callaborators, titles, and affiliations
-
-
-  1. Hwashin Shin 
+  2. Hwashin Shin 
 
      Affiliation: Environmental Health Science and Research Bureau, Health Canada
      
      Affiliation: Department of Mathematics and Statistics, Queen's University 
 
 
-  2. Kamal Rai
-
-     Affiliation: Centre for Global Health Research, St. Michael's Hospital
-     
-     Affiliation: Department of Statistical Sciences, University of Toronto
-
-
   3. Pierre Masselot
 
-     Affiliation: Imperial College London (?)
+     Affiliation: London School of Hygiene & Tropical Medicine
 
-
-  4. Others: In New Brunswick? In France? 
 
 
 ### List of potential partner organizations (optional)
@@ -71,7 +68,9 @@ Centre for Global Health Research, St. Michael's Hospital
   
 Department of Statistical Sciences, University of Toronto
 
-Health Canada
+Institut National de Santé Publique du Québec (?)
+
+<!-- Health Canada (?) --> 
 
 
 
@@ -96,16 +95,16 @@ $$
   \log(\lambda_{t}) &= X\beta + \gamma P_{1} + \sum\limits_{i=1}^{I} f_{i}(t_{i}).
 \end{aligned}
 $$
-Here, $Y_{t}$ is the mortality outcome of interest, such as respiratory mortality or morbidity. The design matrix $X$ typically contains day-of-the-week effects and seasonal terms, and the $f_{i}(t_{i})$ are smooth functions of potential confounders such as time and temperature. When fit to Canadian mortality data, the log relative risks estimated by the one-pollutant model are very small for PM~2.5~, PM~10~, SO~2~, and NO~2~ [@guowen2020multi]. Additionally, the association between the chosen health outcome and $P_{1}$ may not be (log) linear, with higher pollutant levels having larger health impacts [@liu2019ambient].
+Here, $Y_{t}$ is the health outcome of interest, such as respiratory mortality or morbidity. The design matrix $X$ typically contains day-of-the-week effects and seasonal terms, and the $f_{i}(t_{i})$ are smooth functions of potential confounders such as time and temperature. When fit to Canadian mortality data, the log relative risks estimated by the one-pollutant model are very small for PM~2.5~, PM~10~, SO~2~, and NO~2~ [@guowen2020multi]. Additionally, the association between the chosen health outcome and $P_{1}$ may not be (log) linear, with higher pollutant levels having larger health impacts [@liu2019ambient].
 
-Modeling $P_{1}$ through a nonlinear but smooth function $s_{1}$ is one potential remedy to the seccond concern. A natural extension of this model to $N$ pollutants is to fit each pollutant $P_{i}$ to its own smooth function $s_{i}$ ($i = 1,\ldots,N)$. Then, the link function in the model becomes, 
+Modeling $P_{1}$ through a nonlinear but smooth function $s_{1}$ is one potential remedy to the second concern. A natural extension of this model to $N$ pollutants is to fit each pollutant $P_{i}$ to its own smooth function $s_{i}$ ($i = 1,\ldots,N)$. Then, the link function in the model becomes, 
 
 $$
 \begin{aligned}
   \log(\lambda_{t}) &= X\beta + \sum\limits_{i=1}^{N} s_{i}(P_{i}) + \sum\limits_{i=1}^{I} f_{i}(t_{i}).
 \end{aligned}
 $$
-While promising, this version of the multiple-pollutant model raises the concern that the the correlation between pollutants may bias estimates, which is particularly meaningful when (log) estimates are so small. Taking inspiration from *additive index models*, this project will apply smooth functions to a convex combination of pollutants [@fawzi2016structured]. This will allow the model to estimate the *combined* effect of these polluntants in a natural and informative way. For instance, this weighted sum naturally captures synergistic effects that can occurs when more than one pollutant is present at higher levels [@xia2006cumulative]. 
+While promising, this version of the multiple-pollutant model raises the concern that the the correlation between pollutants may bias estimates, which is particularly meaningful when (log) estimates are so small. Taking inspiration from *additive index models*, discussed in @fawzi2016structured, this project will apply smooth functions to a convex combination of pollutants. This will allow the model to estimate the *combined* effect of these polluntants in a natural and informative way. For instance, this weighted sum naturally captures synergistic effects that can occurs when more than one pollutant is present at higher levels [@xia2006cumulative]. 
 
 Let $f_{i}$ ($i=1,\ldots,I$) denote smooth functions of confounders and $s_{1}$ a smooth function of pollutants $P_{1}$ and $P_{2}$. Thus, the link function in our proposed model is,
 
@@ -116,7 +115,7 @@ $$
 $$
 Here, $\alpha_{1}$ and $\alpha_{2}$ are weights that will be estimated by the model. They can be interpreted as the relative impact that each pollutant on the chosen mortality outcome. 
 
-The second research question considers the mortality outcome of daily coronavirus deaths. This has become an active area of research in recent months. For instance, [@wu2020exposure] finds that a 1 $\mu$g increase in  long-term exposure to ambient PM~2.5~ increases the coronavirus death rate by 15%. Additional studies that examine this relationship include [@conticini2020can; @sciomer2020sars; @setti2020searching]. 
+The second research question considers the mortality outcome of daily coronavirus deaths. This has become an active area of research in recent months. For instance, @wu2020exposure finds that a 1 $\mu$g increase in  long-term exposure to ambient PM~2.5~ increases the coronavirus death rate by 15%. Additional studies that examine this relationship include [@conticini2020can; @sciomer2020sars; @setti2020searching]. 
 
 Much work remains to be done. For instance, non-COVID-19 daily mortality data is generally not available, such that these early results are unable to obtain an accurate measure of the *excess* deaths attributable to COVID-19. This is a very important point, as COVID-19 cases (and deaths) are likely under-reported due to limited levels of testing. For another, cumulative COVID-19 mortality will continue to rise for some time, such that this question is most suitable for ongoing inquiry over the next 2-3 years. 
 
@@ -156,11 +155,11 @@ Not necessary in the LOI. This will be included in the full proposal.
 
 <!-- Degrees, current position(s), selected peer-reviewed publications (last 6 years), other evidence of impact and contributions (last 6 years), and numbers of undergraduate, master’s level, PhD level and postdoctoral trainees (last 6 years). --> 
 
-1. Hwashin
-2. Marta?
-3. Patrick 
-4. Fateh 
-5. Cindy  
+  - Patrick 
+  - Fateh 
+  - Hwashin
+  - Meredith
+  - Cindy  
 
 ### Preliminary budget description
 
