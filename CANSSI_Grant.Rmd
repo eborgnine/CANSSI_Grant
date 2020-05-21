@@ -85,7 +85,7 @@ Institut National de Santé Publique du Québec (?)
 This project aims to investigate the combined effect of multiple pollutants on various mortality outcomes by examining two main research questions.
   
   1. What is the combined effect of multiple pollutants on various daily mortality outcomes? 
-  2. What is the relationship between daily nCovid-19 mortality and air pollution? 
+  2. What is the relationship between daily COVID-19 mortality and air pollution? 
   
 Let us consider the first research question. The workhorse of the air pollution literature is a one-pollutant Poisson regression model that accounts for confounders using fixed effects and smooth functions, typically a natural cubic splines [@samet2000fine; @dominici2002use; @laden2006reduction]. A typical model is,
 
@@ -117,7 +117,7 @@ Here, $\alpha_{1}$ and $\alpha_{2}$ are weights that will be estimated by the mo
 
 The second research question considers the mortality outcome of daily coronavirus deaths. This has become an active area of research in recent months. For instance, @wu2020exposure finds that a 1 $\mu$g increase in  long-term exposure to ambient PM~2.5~ increases the coronavirus death rate by 15%. Additional studies that examine this relationship include [@conticini2020can; @sciomer2020sars; @setti2020searching]. 
 
-Much work remains to be done. For instance, non-COVID-19 daily mortality data is generally not available, such that these early results are unable to obtain an accurate measure of the *excess* deaths attributable to COVID-19. This is a very important point, as COVID-19 cases (and deaths) are likely under-reported due to limited levels of testing. For another, cumulative COVID-19 mortality will continue to rise for some time, such that this question is most suitable for ongoing inquiry over the next 2-3 years. 
+Much work remains to be done. For instance, non-COVID-19 daily mortality data is generally not yet available, such that we do not have an accurate meaasure of *excess* deaths attributable to COVID-19. These excess deaths could be attributable to under-reported COVID-19 case and death counts (due to limited testing) or restricted access to care for patients with other health conditions. Moreover, cumulative COVID-19 mortality will likley continue to rise for some time, making the question of excess deaths best suited for an ongoing inquiry that help inform public health responses. 
 
 \newpage 
 
