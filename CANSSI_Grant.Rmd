@@ -1,5 +1,5 @@
 ---
-title: "CANSSI Grant Proposal (Early Draft)"
+title: "Modeling Linear Combinations of Multiple Pollutants"
 output:
   pdf_document:
     latex_engine: xelatex
@@ -18,106 +18,132 @@ classoption: letterpaper
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-### Title of Project
+## Name and affiliations of lead investigators
 
-???
+Name: Professor Patrick Brown <br/>  
+Affiliations: Centre for Global Health Research, St. Michael's Hospital <br/>  
+             \hspace*{52.5pt} Department of Statistical Sciences, University of Toronto
 
-### Name and Affiliations of lead investigators
+Name: Professor Fateh Chebana <br/>  
+Affiliation: Institut national de la recherche scientifique (INRS)
 
-  1. Patrick Brown
-
-     Affiliation: Centre for Global Health Research, St. Michael's Hospital
-     
-     Affiliation: Department of Statistical Sciences, University of Toronto
-
-  2. Fateh Chebana
-  
-     Affiliation: Institut national de la recherche scientifique (INRS)
-
-  2. Cindy Feng 
-  
-     Affiliation: School of Epidemiology and Public Health, University of Ottawa
+Name: Professor Cindy Feng <br/>  
+Affiliation: School of Epidemiology and Public Health, University of Ottawa
 
 
 
-### List of proposed callaborators, titles, and affiliations
+## List of proposed callaborators, titles, and affiliations
 
-  1. Kamal Rai
-
-     Affiliation: Centre for Global Health Research, St. Michael's Hospital
-     
-     Affiliation: Department of Statistical Sciences, University of Toronto
-
-
-  2. Hwashin Shin 
-
-     Affiliation: Environmental Health Science and Research Bureau, Health Canada
-     
-     Affiliation: Department of Mathematics and Statistics, Queen's University 
+Name: Kamal Rai <br/>  
+Title: Post-Doctoral Fellow (?) <br/>  
+Affiliations: Centre for Global Health Research, St. Michael's Hospital <br/>  
+             \hspace*{52.5pt} Department of Statistical Sciences, University of Toronto
 
 
-  3. Pierre Masselot
+Name: Hwashin Shin <br/>  
+Title: Adjunct Associate Professor (?) <br/>  
+Affiliations: Environmental Health Science and Research Bureau, Health Canada <br/>  
+             \hspace*{52.5pt} Department of Mathematics and Statistics, Queen's University 
 
-     Affiliation: London School of Hygiene & Tropical Medicine
+Name: Pierre Masselot <br/>  
+Title: Post-Doctoral Fellow (?) <br/>    
+Affiliation: London School of Hygiene & Tropical Medicine
+   
 
+## List of potential partner organizations (optional)
 
-
-### List of potential partner organizations (optional)
-
-Centre for Global Health Research, St. Michael's Hospital 
-  
-Department of Statistical Sciences, University of Toronto
-
-Institut National de Santé Publique du Québec (?)
-
-<!-- Health Canada (?) --> 
-
+Centre for Global Health Research, St. Michael's Hospital  <br/>  
+Institut National de Santé Publique du Québec (?) <br/>  
+Health Canada 
 
 
 \newpage
 
-### Research Aims
+## Research Aims
 
 <!-- Limit to 5 pages, including references (include all details). Will be expanded to 7 pages in the full proposal -->
 
+### The Model
+
+We propose to develop a statistical methodology for modeling the *combined effect* of multiple covariates with non-linear relationships to the outcome of interest. For a response distribution $D$ from the exponential family with a d-dimensional parameter $\theta = (\theta_{1},\ldots,\theta_{d})$ and invertible (canonical) link function $g$, the general form of the proposed model is,
+
+$$
+\begin{aligned}
+  Y_{t} | \theta_{t} &= D( \theta ), \\
+  g( \theta ) &= X\beta + 
+        \sum\limits_{i=1}^{I} s_{i}(\alpha_{1}\gamma_{1} + \ldots + \alpha_{n_{i}}\gamma_{n_{i}})+ 
+        \sum\limits_{k=1}^{K} f_{k}( \eta_{k,*} )
+\end{aligned}
+$$
+In the above, $X$ is a regression matrix and $\beta$ a vector of fixed effects. The second sum consists of $K$ smoothing functions $f_{1}, \ldots, f_{K}$ applied to $K$ potential confounders $\eta_{k,*}$ (where $*$ indexes possible values of $\eta_{k,*}$). Our interest lies in the first sum, which fits smooth functions to convex combinations of covariates. This is a flexible and extensible model that allows for nonlinear interactions between an outcome of interest $Y_{t}$ and covariates $(\alpha_{1},\ldots,\alpha_{n_{i}})_{i=1}^{I}$ via smoothing functions $\{ f_{i} \}$. 
+
+To explore the flexibility of this model, we compare it to a standard regression model and one with a more general functional specification of $s_{i}$. To ease the notation in the notation, let us assume there are no confounders and that are only considering a convex combination of two covariates $\gamma_{1}$ and $\gamma_{2}$. Then, there three models we are considering have link function,
+$$
+\begin{aligned}
+  \text{ 1. } g( \theta ) &= X\beta + \alpha_{1}\gamma_{1} + \alpha_{2}\gamma_{2} & \text{ Standard link function  } \\
+  \text{ 2. } g( \theta ) &= X\beta + s_{1}(\alpha_{1}\gamma_{1} + \alpha_{2}\gamma_{2}) & \text{ Proposed link function } \\
+  \text{ 3. } g( \theta ) &= X\beta + s_{1}^{*}(\gamma_{1}, \gamma_{2}) & \text{ 2D link function } \\
+\end{aligned}
+$$
+Here, it easy to see that the complexity of the second model, proposed in this paper, is between that of a standard regression model and one that uses a 2-dimensional smoother. The proposed model fits a convex combination of $\gamma_{1}$ and $\gamma_{2}$ using a 1-dimensional smoothing function, which has two major advantages over using a 2-dimensional smoother. It's first advantage is that it is less computationally demanding, as it does *not* suffer from the curse of dimensionality. The convex combination $\alpha_{1}\gamma_{1} + \alpha_{2}\gamma_{2}$ is always 1-dimensional, and remains so regardless of how many terms are the sum. This constrasts to $s^{*}_{1}$, whose dimensionality scales with its number of inputs. It's second advantage is that it is more interpretable. The *weights* $\alpha_{1}$ and $\alpha_{2}$ reflect the relative contribution of $\gamma_{1}$ and $\gamma_{2}$ (respectively) and are thus readily interpretable. In comparison, $s^{*}(\gamma_{1},\gamma_{2})$ has no such weights and is perhaps best interpreted via (two-dimensional) visualizations.
+
+We propose to develop a fully Bayesian implementation of this model using Stan, a widely used software package that allows for rapid iteration and development of Bayesian models. As Bayesians, we will use random walks as our smoothing function; their equivalent to smoothing splines is detailed in [@, @].
+
+**ADD**: Non-MCMC implementations?  
 
 
-This project aims to investigate the combined effect of multiple pollutants on various mortality outcomes by examining two main research questions.
+## Research Questions
+
+### Overview
+
+Recent years have seen an increased interest in modeling the joint effect of two or more pollutants in health outcomes [@dominici2010protecting; @billionnet2012estimating; @davalos2017current]; Bayesian approaches can be seen in [@blangiardo2019hierarchical; @bobb2013reduced; @huang2018multivariate]. 
   
   1. What is the combined effect of multiple pollutants on various daily mortality outcomes? 
   2. What is the relationship between daily COVID-19 mortality and air pollution? 
   
-Let us consider the first research question. The workhorse of the air pollution literature is a one-pollutant Poisson regression model that accounts for confounders using fixed effects and smooth functions, typically a natural cubic splines [@samet2000fine; @dominici2002use; @laden2006reduction]. A typical model is,
+  
+### Research Question #1
+
+The workhorse of the air pollution literature is the one-pollutant Poisson regression model that accounts for confounders using fixed effects and smooth functions, typically a natural cubic splines [@samet2000fine; @dominici2002use; @laden2006reduction]. Let the *average* $\lambda_{t}$. Then, a typical model is,
 
 $$
 \begin{aligned}
   Y_{t} | \lambda_{t} &= \text{Poisson}(\lambda_{t}), \\
-  \log(\lambda_{t}) &= X\beta + \gamma P_{1} + \sum\limits_{i=1}^{I} f_{i}(t_{i}).
+  \log(\lambda_{t}) &= X\beta + \gamma_{1} P_{1,t} + \sum\limits_{k=1}^{K} f_{k}(\eta_{k,*}).
 \end{aligned}
 $$
-Here, $Y_{t}$ is the health outcome of interest, such as respiratory mortality or morbidity. The design matrix $X$ typically contains day-of-the-week effects and seasonal terms, and the $f_{i}(t_{i})$ are smooth functions of potential confounders such as time and temperature. When fit to Canadian mortality data, the log relative risks estimated by the one-pollutant model are very small for PM~2.5~, PM~10~, SO~2~, and NO~2~ [@guowen2020multi]. Additionally, the association between the chosen health outcome and $P_{1}$ may not be (log) linear, with higher pollutant levels having larger health impacts [@liu2019ambient].
+Here, $Y_{t}$ is the health outcome of interest, such as respiratory mortality or morbidity. The design matrix $X$ typically contains day-of-the-week effects and seasonal terms, and the $f_{i}(\eta_{k,*})$ are smooth functions of potential confounders such as time and temperature. A more flexible version of this model is to fit $P_{1,t}$ to its own smooth function $s_{i}$. More generally, we could fit $N$ pollutants using smooth functions. A third alternative is to model multiple pollutants by applying smooth functions to linear combinations of pollutants. 
 
-Modeling $P_{1}$ through a nonlinear but smooth function $s_{1}$ is one potential remedy to the second concern. A natural extension of this model to $N$ pollutants is to fit each pollutant $P_{i}$ to its own smooth function $s_{i}$ ($i = 1,\ldots,N)$. Then, the link function in the model becomes, 
+These are same three scenarios as considered above. *Why move beyond the linear model*?
 
-$$
-\begin{aligned}
-  \log(\lambda_{t}) &= X\beta + \sum\limits_{i=1}^{N} s_{i}(P_{i}) + \sum\limits_{i=1}^{I} f_{i}(t_{i}).
-\end{aligned}
-$$
-While promising, this version of the multiple-pollutant model raises the concern that the the correlation between pollutants may bias estimates, which is particularly meaningful when (log) estimates are so small. Taking inspiration from *additive index models*, discussed in @fawzi2016structured, this project will apply smooth functions to a convex combination of pollutants. This will allow the model to estimate the *combined* effect of these polluntants in a natural and informative way. For instance, this weighted sum naturally captures synergistic effects that can occurs when more than one pollutant is present at higher levels [@xia2006cumulative]. 
+Using linear combinations of pollutants will allow the model to estimate their *combined* effect in a natural and informative way. For instance, this weighted sum naturally captures synergistic effects that can occurs when more than one pollutant is present at higher levels [@xia2006cumulative]. The levels of different pollutants are also highly correlated (**ADD**: Reference); modeling sums as nonlinear functions will help alleviate the statistical concerns introduced by this high correlation (**ADD**: Reference).
 
-Let $f_{i}$ ($i=1,\ldots,I$) denote smooth functions of confounders and $s_{1}$ a smooth function of pollutants $P_{1}$ and $P_{2}$. Thus, the link function in our proposed model is,
+<!--
+(**ADD**: Better transition). When fit to Canadian mortality data, the log relative risks estimated by the one-pollutant model are very small for PM~2.5~, PM~10~, SO~2~, and NO~2~ [@guowen2020multi]. Additionally, the association between the chosen health outcome and $P_{1}$ may not be (log) linear, with higher pollutant levels having larger health impacts [@liu2019ambient]. 
+-->
 
-$$
-\begin{aligned}
-  \log(\lambda_{t}) &= X\beta + s_{1}(\alpha_{1}P_{1} + \alpha_{2}P_{2}) + \sum\limits_{i=1}^{I} f_{i}(t_{i}).
-\end{aligned}
-$$
-Here, $\alpha_{1}$ and $\alpha_{2}$ are weights that will be estimated by the model. They can be interpreted as the relative impact that each pollutant on the chosen mortality outcome. 
+### Comparisons to other Multi-Pollutant Models 
 
-The second research question considers the mortality outcome of daily coronavirus deaths. This has become an active area of research in recent months. For instance, @wu2020exposure finds that a 1 $\mu$g increase in  long-term exposure to ambient PM~2.5~ increases the coronavirus death rate by 15%. Additional studies that examine this relationship include [@conticini2020can; @sciomer2020sars; @setti2020searching]. 
+Recent years have seen more interest in modeling the health impact of multiple pollutants. The review article by @davalos2017current identified various statistical approaches used to accounting for multiple pollutants: additive main effects, effect measure modification, dimension reduction, and nonparametric methods. Additive main effects models are difficult to extend to multiple pollutants [@dominici2010protecting], while nonparameteric methods are generally less interpretable than parametric ones. A principle goal of air pollution modeling is to build evidence regarding levels that cause health effects. Given the multi-disciplinary nature of the research teams and potential stakeholders regarding this research, the models *must* be easily interpetable to meet this goal. 
 
-Much work remains to be done. For instance, non-COVID-19 daily mortality data is generally not yet available, such that we do not have an accurate meaasure of *excess* deaths attributable to COVID-19. These excess deaths could be attributable to under-reported COVID-19 case and death counts (due to limited testing) or restricted access to care for patients with other health conditions. Moreover, cumulative COVID-19 mortality will likley continue to rise for some time, making the question of excess deaths best suited for an ongoing inquiry that help inform public health responses. 
+A number of dimension reduction methods are identified in @davalos2017current. Unsupervised methods include principle components analysis (PCA) and k-means clustering. Unfortunately, the coefficients obtained from using PCA are often difficult to interpret, and clustering is also difficult to interpret. Some papers using supervised methods consider weighted sums of pollutant concentrations. The authors of @pachon2012development specify the weights from data rather than estimating them, while the authors of @roberts2006investigating consider model a *mixture* of pollutants linearly; this corresponds to assuming that $s_{1}(\alpha_{1}P_{1,t} + \alpha_{2}P_{2,t}) = \beta_{m}(\alpha_{1}P_{1,t} + \alpha_{2}P_{2,t})$ is a linear function. 
+
+In @sun2013statistical, the authors make quantitative comparisons of five different methods. These include 
+
+
+## Research Question #2
+
+The relationship between daily coronavirus deaths and air pollution levels has become an active area of research in recent months. For instance, @wu2020exposure finds that a 1 $\mu$g increase in long-term exposure to ambient PM~2.5~ increases the coronavirus death rate by 15%. Additional studies that examine this relationship include [@conticini2020can; @sciomer2020sars; @setti2020searching]. 
+
+However, much work remains to be done. For instance, non-COVID-19 daily mortality data is generally not yet available, such that we do not have an accurate meaasure of *excess* deaths attributable to COVID-19. These excess deaths could be attributable to under-reported COVID-19 case and death counts (due to limited testing), restricted access to care for patients with other health conditions, or potential reporting delays. Moreover, cumulative COVID-19 mortality will likely continue to rise for some time, making the question of excess deaths due to COVID-19 best suited for an ongoing inquiry that help inform public health responses. 
+
+
+
+
+
+
+
+
 
 \newpage 
 
@@ -125,19 +151,10 @@ Much work remains to be done. For instance, non-COVID-19 daily mortality data is
 
 <!-- Limit to 1/2 page. Full details will be included in the full proposal --> 
 
-  1. Kamal 
+Kamal will develop the Bayesian implementation of the multiple pollutant models in Stan. This includes exploring determining appropriate prior distributions for the weights $\alpha$ and developing visualizations that communicate model results in a simple and interpretable way. He will be responsible for producing paper(s) summarizing the results of this model when run on Canadian air pollution and mortality data. To facilitate team communication and cohesion, he will also split time between Toronto (at the Centre for Global Health Research) and Ottawa (at the Universtiy of Ottawa), and use the proximity to Quebec to visit the collaborators there.  
 
-     Role: Will implement the models?
+The University of Toronto PhD student will compare the results from the Bayesian random walk models to those obtained from non-MCMC methods. For example, these could include frequentist methods that fit (natural cubic) splines or Bayesian inference using R-INLA [@rue2009approximate]. The University of Laval/University of Ottawa PhD student will compare the results from the Stan implementation to those obtained by a case-crossover model. 
 
-
-  2. Trainee: University of Toronto PhD
-
-     Role: TBD
-
-
-  3. Trainee: University of Ottawa PhD
-
-     Role: TBD
 
 <!-- 
 ### Anticipated organization of collaborations
@@ -149,40 +166,32 @@ Not necessary in the LOI. This will be included in the full proposal.
 
 <!-- Limit to 5 sentences. This will be expanded in a full proposal. -->
 
+The results and findings of this multiple pollutant inquiry will be shared with Health Canada and the Institut National de Santé Publique du Québec. The lead investigators have a track record of publishing their research results in statistical and epidemiolgical journals, and aim to publish the results of this project in high-impact journals. They (or the trainees) will also attend appropriate conferences to present the work while it in progress.
+
 ### Suggested reviewers
 
 ### (Possible) CVs
 
 <!-- Degrees, current position(s), selected peer-reviewed publications (last 6 years), other evidence of impact and contributions (last 6 years), and numbers of undergraduate, master’s level, PhD level and postdoctoral trainees (last 6 years). --> 
 
-  - Patrick 
-  - Fateh 
-  - Hwashin
-  - Meredith
-  - Cindy  
+  - Patrick, Fateh, Hwashin, Meredith, Cindy  
 
 ### Preliminary budget description
 
 <!-- Limit to 1/4 of a page. This will be expanded in a full proposal. --> 
 
-(Tentative) Budget: 
+The CANSSI Collaborative Research Team (CRT) grant is for $180,000 over 3 years. We propose the budget:
 
-- 50% for post-doc salary 
-- 10% for travel + conferences 
-- 20% for Laval PhD student
-- 20% for UofT PhD student 
-
-Annual meetings: 2-day meeting in Ottawa, just prior to SSC (5k?)
+  1. $30,000/year to support post-doctoral funding; matched by the Centre for Global Health Research.
+  2. $12,000/year to support a Laval University or University of Ottawa PhD student.
+  3. $12,000/year to support a University of Toronto PhD student.
+  4. $6,000/year to support travel to/from the cities of the lead investigators -- Toronto, Ottawa, and Quebec -- and annual team meetings held around the Statistical Society of Canada conference.
 
 
 ### Other funding (optional)
 
-Are there other funding sources? 
-
+The Centre for Global Health Research at St. Michael's Hospital will contribute $30,000 to post-doctoral funding. Additional expenses (travel, conference registration, etc.) related to disseminating results will be paid for by the lead investigators.
 
 \newpage
 
 ### References 
-
-
-
