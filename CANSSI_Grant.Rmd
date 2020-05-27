@@ -10,6 +10,8 @@ geometry: margin=1in
 fontsize: 12pt
 documentclass: article
 classoption: letterpaper
+link-citations: true
+csl: journal-of-the-royal-statistical-society.csl
 ---
 
 \setmainfont{Calibri}
@@ -119,11 +121,16 @@ The multiple pollutant problem has received increased intention in recent years.
 
 While there has been significant research interest in the multiple pollutant problem, the models proposed to date have either computational limitations or limited interpretability. In contrast, the GAIM has interpretable parameters and its computational burden does *not* scale with the dimensionality of its inputs. Therefore, using the GAIM to examine the health effect of a mixture of pollutants will provide interpretable and communicable results on this research question. Finally, note that while air pollution is the main example in this proposal, the GAIM has applications wherever the target of inference is a mixture of covariates that relate nonlinearly to an outcome of interest. 
 
+
 ### Question 2
 
-The relationship between daily COVID-19 deaths and air pollution levels has become an active area of research in recent months. For instance, @wu2020exposure finds that a 1 $\mu$g increase in long-term exposure to ambient PM~2.5~ increases the COVID-19 death rate by 15%. Additional studies that examine this relationship include @conticini2020can, @sciomer2020sars, and @setti2020searching. 
+The relationship between daily COVID-19 deaths and air pollution levels has become an active area of research in recent months. For instance, @wu2020exposure apply a zero-inflated negative bionomial model U.S. data, where the zero-inflation accounts for U.S. counties with *no* COVID-19 deaths. They use a log-linear link function with a state-level random effect, and find that a 1 $\mu$g increase in long-term exposure to ambient PM~2.5~ increases the COVID-19 death rate by 15%. Additional studies that examine this relationship include @conticini2020can, @sciomer2020sars, and @setti2020searching. 
 
-However, much work remains to be done. For instance, non-COVID-19 daily mortality data is generally not yet available, such that we do not have an accurate measure of *excess* deaths attributable to COVID-19, especially among vulnerable populations such as seniors. These excess deaths could be attributable to under-reported COVID-19 case and death counts (due to limited testing), restricted access to care for patients with other health conditions, or potential reporting delays. Moreover, cumulative COVID-19 mortality will likely continue to rise for some time, making the question of excess deaths due to COVID-19 best suited to an ongoing inquiry that may help inform improve subsequent public health responses.
+However, much work remains to be done. For instance, non-COVID-19 daily mortality data is generally not yet available, such that we do not have an accurate measure of *excess* deaths attributable to COVID-19, especially among vulnerable populations such as seniors. These excess deaths could be attributable to under-reported COVID-19 case and death counts (due to limited testing), restricted access to care for patients with other health conditions, or potential reporting delays. Moreover, cumulative COVID-19 mortality will likely continue to rise for some time, making the question of excess deaths due to COVID-19 best suited to an ongoing inquiry that may help inform subsequent public health responses.
+
+We will use the GAIM to examine the relationship between COVID-19 deaths and long-term exposure to air pollution. Compared to the log-linear negative binomial model in @wu2020exposure, the GAIM is scaleable, interpretable, and can capture non-linearities in the relationship between mixtures and the response. To apply the GAIM to this research question, we must choose the outcome of interest $Y_{t}$ as COVID-19 deaths. To specifically investigate seniors, we may (for example) take $Y_{t}$ to be those aged 65+. Applying the GAIM to air pollution and COVID-19 death data will allow us to ascertain *which* mixtures of pollutants increase COVID-19 mortality, as well as how their effects differ among age groups. 
+
+This inquiry will make two contributions to the growing COVID-19 literature. The first is that it will help determine how different mixtures of air pollutants amplify the impact of COVID-19. The second is that since people in different regions are exposed to different mixtures of pollutants, it will help identify which *mixtures* of pollutants have the largest impact on COVID-19 deaths. Both contributions will also further our understanding of the health impacts of air pollution.
 
 
 ## References 
@@ -138,7 +145,7 @@ However, much work remains to be done. For instance, non-COVID-19 daily mortalit
 
 Kamal will develop the Bayesian implementation of the GAIM models in Stan. This includes exploring determining appropriate prior distributions for the weights $\alpha$, developing visualizations that communicate modeling results, and assisting other project members in developing shape constraints. He will be responsible for producing paper(s) summarizing the results of this model when run on Canadian air pollution and mortality data. To facilitate team communication and cohesion, he will also split time between Toronto (at the Centre for Global Health Research) and Ottawa (at the University of Ottawa), and use the proximity of the University of Ottawa to Quebec to occasionally visit project collaborators located there.
 
-The University of Toronto PhD student will develop non-MCMC methods to conduct inference on the GAIM, and compare its results from those obtained from the Stan implementation. The University of Laval/University of Ottawa PhD student will develop methods to conduct shape-constrained (Bayesian) inference, and examine their estimation performance under wide a variety of modeling applications.
+The University of Toronto PhD student will develop non-MCMC methods to conduct inference on the GAIM, and compare its results from those obtained from the Stan implementation. The University of Laval/University of Ottawa PhD student will develop methods to conduct shape-constrained (Bayesian) inference, and examine the relationship between COVID-19 deaths and air pollution levels. 
 
 
 <!-- 
@@ -151,7 +158,7 @@ Not necessary in the LOI. This will be included in the full proposal.
 
 <!-- Limit to 5 sentences. This will be expanded in a full proposal. -->
 
-The lead investigators of this proposal have a track record of publishing research results in leading statistical and epidemiological journals, and aim to publish the results of this project in high-impact journals. The results and findings of this multiple pollutant inquiry will also be shared with Health Canada and the Institut National de Santé Publique du Québec. 
+The lead investigators of this proposal have a track record of publishing research results in leading statistical and epidemiological journals, and aim to publish the results of this project in high-impact journals. The results and findings of this multiple pollutant inquiry will also be shared with Health Canada and the Institut National de Santé Publique du Québec (?). 
 
 
 # Suggested reviewers
