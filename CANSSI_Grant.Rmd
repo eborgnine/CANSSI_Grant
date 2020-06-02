@@ -1,10 +1,11 @@
 ---
-title: "Modeling Linear Combinations of Multiple Pollutants"
+title: "Modeling Linear Combinations of Multiple Pollutants for Health Outcomes"
 output:
   pdf_document:
     latex_engine: xelatex
 header-includes:
   - \usepackage{fontspec}
+  - \usepackage{geometry}
 bibliography: CANSSI_Grant.bib
 geometry: margin=1in 
 fontsize: 12pt
@@ -15,6 +16,7 @@ csl: journal-of-the-royal-statistical-society.csl
 ---
 
 \setmainfont{Calibri}
+\vspace{-2em}
 
 # Name and affiliations of lead investigators
 
@@ -23,7 +25,7 @@ Affiliations: Centre for Global Health Research, St. Michael's Hospital <br/>
              \hspace*{52.5pt} Department of Statistical Sciences, University of Toronto
 
 Name: Professor Fateh Chebana <br/>  
-Affiliation: Institut national de la recherche scientifique (INRS)
+Affiliation: Institut national de la recherche scientifique 
 
 Name: Professor Cindy Feng <br/>  
 Affiliation: School of Epidemiology and Public Health, University of Ottawa
@@ -49,7 +51,7 @@ Affiliation: Institut National de Santé Publique du Québec
 
 
 Name: Pierre Masselot <br/>  
-Title: Post-Doctoral Fellow <br/>    
+Title: Research Fellow <br/>    
 Affiliation: London School of Hygiene & Tropical Medicine
    
 
@@ -68,32 +70,34 @@ Health Canada
 
 <!-- Limit to 5 pages, including references (include all details). Will be expanded to 7 pages in the full proposal -->
 
-We will develop a fully Bayesian implementation of the *groupwise additive index model* (GAIM), a constrained frequentest version of which is introduced in @pierre2020aim. For a response distribution $D$, parameter $\theta = (\theta_{1},\ldots,\theta_{d})$, and link function $g$, the GAIM is,
+## Introduction 
+
+Possible epidemiological applications include examining the health effects of environmental exposures, such as chemical mixtures, metal mixtures, pesticides, and mixtures of air pollutants [@sanders2015perinatal; @braun2016can; @lazarevic2019statistical; @bobb2015bayesian]. 
+
+The major application considered in this proposal is air pollution. 
+
+## The Model 
+
+We will develop a Bayesian implementation of the *constrained groupwise additive index model* (cGAIM), which we term the bcGAIM. The cGAIM is introduced in @pierre2020aim, but no Bayesian implementation currently exists.
+There are differences between the cGAIM and bcGAIM. We begin our discussion of these differences by introducing the cGAIM. For a response distribution $D$, parameter $\theta = (\theta_{1},\ldots,\theta_{d})$, and link function $g$, the cGAIM is,
 
 \vspace{-0.75em}
 $$
 \begin{aligned}
-  Y_{t} | \theta_{t} &= D( \theta ), \\
+  Y_{t} | \theta_{t} & \stackrel{i.i.d.}{\sim}  D( \theta_{t} ), \\
   g( \theta ) &= X\beta + 
-        \sum\limits_{i=1}^{I} s_{i}(\alpha_{1}\gamma_{1,t} + \ldots + \alpha_{n_{i}}\gamma_{n_{i},t})+ 
-        \sum\limits_{k=1}^{K} f_{k}( \eta_{k} )
+        \sum\limits_{i=1}^{I} s_{i}(\alpha_{i}^{T} Z_{i} )+ 
+        \sum\limits_{k=1}^{K} f_{k}( \eta_{k} ).
 \end{aligned}
 $$
-$Y_{t}$ is the outcome of interest, $X$ is a design matrix, and $\beta$ is a vector of fixed effects. The second sum consists of $K$ smoothing functions $f_{1}, \ldots, f_{K}$ applied to potential confounders $\eta_{k}$. The novelty lies in its first sum, which fits smooth functions to a weighted sum (*mixture*) of potentially time-varying covariates. 
+Here, $Y_{t}$ is the (health) outcome of interest, $X$ is a design matrix, and $\beta$ is a vector of fixed effects. The second sum consists of $K$ smoothing functions $f_{1}, \ldots, f_{K}$ applied to vector-valued confounders $\eta_{k}$. The novelty of the cGAIM lies in its first sum, which fits a smooth function to a linear combination of covariates $Z_{i}$. The cGIAM can enforce a number of hard constraints on the $\alpha_{i}$ or $s_{i}$. For example, it can constrain the entries of $\alpha_{i}$ to be non-negative and sum to one, so that $\alpha_{i}^{T}Z_{i}$ is a weighted sum (*mixture*) of the $Z_{i}$. It can also constrain the shape of the $s_{i}$ by, for example, requiring that $s_{i}$ be monotonic or convex. 
 
-The GAIM is a flexible and extensible statistical model with a wide variety of potential applications, as the researcher can choose the number $I$ of smooth functions $s_{i}$ and the number of covariates $n_{i}$ in each $s_{i}$. Possible epidemiological applications include examining the health effects of environmental exposures, such as chemical mixtures, metal mixtures, pesticides, and mixtures of air pollutants [@sanders2015perinatal; @braun2016can; @lazarevic2019statistical; @bobb2015bayesian]. For example, a possible air pollution model could have one smooth function $s_{1}$ and two covariates $\gamma_{1,t}$ and $\gamma_{2,t}$, where $\gamma_{1,t}$ is the (time-varying) concentration of ozone (O~3~) and $\gamma_{2,t}$ is the (time-varying) concentration of particulate matter less than 2.5 $\mu$g (PM~2.5~). In this case, the weights $\alpha = (\alpha_{1}, \alpha_{2})$ give the relative contribution of O~3~ and PM~2.5~ to the health outcome of interest. Another possible model could have 3 additional pollutants -- nitrogen dioxide (NO~2~), sulfur dioxide (SO~2~), and particulate matter less than 10 $\mu$g (PM~10~) -- such that the 5 weights $\alpha$ give the relative contribution of each pollutant. The models could also include interaction terms, or additional smooth functions $s_{i}$ that group the pollutants in a scientifically justified way.
+The cGAIM uses an iterative two-step optimization scheme. In the first step, the $\alpha_{i}$ are updated using a quadratic program. In the second step, the $s_{i}$ are updated using the shape-constrained additive model methodology [@pya2015shape]. The bcGAIM will initially be implemented in Stan, a statistical modeling language that performs optimization using Hamiltonian Monte Carlo [@carpenter2017stan]. With Stan performing the optimization, the main task for implementing the bcGAIM in Stan is in developing priors that enforce the constraints seen in the cGAIM. For a simple example of this task, setting a Dirichlet prior on $\alpha_{i}$ constrains it to be a vector of weights [@betancourt2012cruising]. 
 
-To explore the benefits of the GAIM, we next compare it to a standard regression model and one where the $s_{i}$ have a more general form. To ease notation, let us assume there are no confounders, one smooth function $s_{1}$, and two covariates, $\gamma_{1,t}$ and $\gamma_{2,t}$, in $s_{1}$. Then, these 3 models have link functions,
-$$
-\begin{aligned}
-  g( \theta ) &= X\beta + \alpha_{1}\gamma_{1} + \alpha_{2}\gamma_{2} & \hspace{100pt} \text{ (1)  } \\
-  g( \theta ) &= X\beta + s_{1}(\alpha_{1}\gamma_{1} + \alpha_{2}\gamma_{2}) & \hspace{100pt} \text{ (2) } \\
-  g( \theta ) &= X\beta + s_{1}^{*}(\gamma_{1}, \gamma_{2}) & \hspace{100pt} \text{ (3) } \\
-\end{aligned}
-$$
-(1) specifies a regression model with 2 fixed effects, $\alpha_{1}$ and $\alpha_{2}$, (2) specifies a GAIM with 2 weights $\alpha_{1}$ and $\alpha_{2}$, and (3) specifies $s_{1}^{*}$ as a 2-dimensional smoothing function. Compared to the linear regression in (1), the GAIM is more flexible. The inclusion of $s_{1}$ allows it to capture nonlinearities in the relationship between $\gamma_{1,t}$, $\gamma_{2,t}$ and the outcome $Y_{t}$. Compared to (3), the GAIM is less computationally demanding -- $\alpha_{1}\gamma_{1,t} + \alpha_{2}\gamma_{2,t}$ is always 1-dimensional, and remains so regardless of how many terms are the sum. This contrasts with $s^{*}_{1}$, whose dimensionality scales with its number of arguments. The GAIM is also more interpretable than (3). The weights $\alpha_{1}$ and $\alpha_{2}$ reflect the relative contribution of $\gamma_{1,t}$ and $\gamma_{2,t}$, respectively.  In comparison, $s^{*}_{1}(\gamma_{1},\gamma_{2})$ has no such weights, and often has no interpretable parameters.
+Setting priors to enforce shape constraints is much more challenging. In addition to being free of unwanted behavior, the chosen prior should be simple and interpretable so that non-statistical experts can use it. This is difficult to achieve for shape constraints. The first reason for this is that $s_{i}$ may not have any parameters related to the desired constraint; for example, a 1^st^-order random walk has no parameters related to monotonicity. To overcome this, $s_{i}$ could be re-parameterized, the functional form of $s_{i}$ could be exploited, or data augmentation schemes that introduce derivative observations could be used [@riihimaki2010gaussian]. The second reason is that substantial mathemtical analysis is required to ensure priors do not introduce unwanted behavior. For example, a truncated multivariate normal (tMVN) prior can induce monotonicity when placed on the coefficients $\beta^{'}$ of a finite basis expansion of $s_{i}$ [@maatouk2017gaussian]. However, the tMVN prior places neglible mass in near-flat regions of $s_{i}$. While @zhou2020truncated remedy this by introducing a scale parameter to the coordinates of the tMVN distribution, the modified tMVN prior is placed on $\beta^{'}$, not $s_{i}$. In comparison to the tMVN prior, we seek a prior on $s_{i}$ that enforces monotonicity, so that it can be easily explained to non-statistical experts. 
+ 
+**ADD**: Why the bcGAIM - what are its advantages over the cGAIM? Finally, following its implementation in Stan, the bcGAIM will be implemented using non-MCMC inference methods, similar to Iterated Nested Laplace Approximation (INLA) [@rue2009approximate]. These methods provide computational and ease-of-use and benefits, and will expand the types of problems and number of users who can make use of the bcGAIM methodology. 
 
-We will develop a fully Bayesian implementation of the GAIM in Stan, a widely used statistical modeling language that performs inference using Hamiltonian Monte Carlo [@carpenter2017stan]. No Bayesian implementation of the GAIM currently exists; developing a robust implementation and releasing an R package would be a significant contribution towards accessible and interpretable dimension-reduction models with epidemiological applications. Developing a robust Bayesian implementation includes identifying suitable priors for the weights $\alpha$ and methods for imposing shape constraints, such as monotonicity and convexity, on the $s_{i}$. We will also develop non-MCMC inference methods for these models, similar to those seen in @rue2009approximate, to facilitate wider use of the GAIM. 
 
 
 
@@ -102,12 +106,12 @@ We will develop a fully Bayesian implementation of the GAIM in Stan, a widely us
 In the course of this project, we will use the GAIM to explore the health effects of multiple air pollutants. Recent years have seen increased interest in modeling the joint effect of two or more pollutants in health outcomes [@dominici2010protecting; @billionnet2012estimating; @davalos2017current]. Bayesian approaches can be seen in @blangiardo2019hierarchical, @bobb2013reduced, and @huang2018multivariate. We will consider two research questions in the course of our inquiry, namely,
   
   1. What is the combined effect of multiple pollutants on various daily mortality outcomes?, and
-  2. What is the relationship between daily COVID-19 mortality and air pollution? 
+  2. What is the relationship between daily COVID-19 mortality/morbidity and air pollution? 
   
   
 ### Question 1
 
-The workhorse of the (predominantly frequentist) air pollution literature is the one-pollutant log-linear Poisson regression model. This model accounts for confounders using fixed effects and smooth functions, such as the natural cubic spline [@samet2000fine; @dominici2002use; @liu2019ambient]. Let the average rate an outcome occurs on day $t$ be denoted by $\lambda_{t}$. Then, a typical one-pollutant model is, 
+The workhorse of the (predominantly frequentist) air pollution literature is the one-pollutant log-linear Poisson regression model. This model accounts for confounders using fixed effects and smooth functions, such as the natural cubic spline [@dominici2002use; @liu2019ambient]. Let the average rate an outcome occurs on day $t$ be denoted by $\lambda_{t}$. Then, a typical one-pollutant model (with pollutant $P_{1,t}$) is, 
 
 \vspace{-0.50em}
 $$
@@ -118,11 +122,13 @@ $$
 $$
 Here, $Y_{t}$ is the health outcome of interest, such as respiratory mortality or morbidity. The design matrix $X$ contains day-of-the-week effects and seasonal terms, and the $f_{i}(\eta_{k,*})$ are smooth functions of potential confounders such as time and temperature. One extension of this model would fit $P_{1,t}$ to a smooth function $s_{1}$. More generally, we could fit $N$ pollutants to $N$ smooth functions, $s_{1}, \ldots, s_{N}$. A third alternative, which we propose here, is to model $N$ pollutants using the GAIM. 
 
-Air pollution is an excellent application area for the GAIM. People are exposed to the mixture of pollutants in their environment, many of which are highly correlated [@guowen2020multi]. Thus, health effects the single pollutant model attributes to $P_{1}$ may very well be caused by a correlated pollutant, or only be present within certain combinations of a mixture of pollutants. Indeed, @franklin2008impact found that the effect of ozone on non-accidental mortality was "substantially reduced" after adjusting for particle sulfate. In @liu2019ambient, the authors found significant differences in the percentage change in all-cause mortality attributable to PM~2.5~ and PM~10~ when adjusting for NO~2~ or SO~2~.
+Air pollution is an excellent application area for the bcGAIM. People are exposed to the mixture of pollutants in their environment, many of which are highly correlated [@guowen2020multi]. Thus, health effects the single pollutant model attributes to $P_{1}$ may very well be caused by a correlated pollutant, or only be present within certain combinations of a mixture of pollutants. Indeed, @franklin2008impact found that the effect of ozone on non-accidental mortality was "substantially reduced" after adjusting for particle sulfate. In @liu2019ambient, the authors found significant differences in the percentage change in all-cause mortality attributable to PM~2.5~ and PM~10~ when adjusting for NO~2~ or SO~2~.
 
-It is therefore crucial to extend the one-pollutant model in a way that attributes health effects to the correct mixture of pollutants. This suggests using a model that conducts inference on mixtures. As for extending the $s_{i}$ to be non-linear, there is evidence that some health outcomes are nonlinearly related to pollution levels, and that synergistic effects occur when multiple pollutants are present at higher levels [@feng2016impact; @xia2006cumulative]. These extensions make the GAIM especially well-suited to estimating nonlinear effects of (pollutant) mixtures: the smooth function(s) $s_{i}$ estimate the effects of their respective weighted sums, where the weights give the relative contribution of the components.
+Like the cGAIM, the bcGAIM is a flexible and extensible statistical model. The researcher can choose the number $I$ of smooth functions $s_{i}$ and the number of covariates $n_{i}$ in each $s_{i}$. For example, an air pollution model could have one smooth function $s_{1}$ and two covariates $\gamma_{1,t}$ and $\gamma_{2,t}$, where $\gamma_{1,t}$ is the time-varying concentration of ozone (O~3~) and $\gamma_{2,t}$ is the time-varying concentration of particulate matter smaller than 2.5 $\mu$g (PM~2.5~). In this case, the weights $\alpha = (\alpha_{1}, \alpha_{2})$ give the relative contribution of O~3~ and PM~2.5~ to the health outcome of interest. Alternatively, the model could have 3 additional pollutants -- nitrogen dioxide (NO~2~), sulfur dioxide (SO~2~), and particulate matter smaller than 10 $\mu$g (PM~10~) -- such that the 5 weights give the relative contribution of each pollutant. The model could also include interaction terms, or additional smooth functions $s_{i}$ that group (for example) correlated pollutants.
 
-The multiple pollutant problem has received increased intention in recent years. . Five approaches are detailed in @davalos2017current. Of these 5 methods, they note that adding additive main effects can lead to biased estimates in the presence of highly correlated variables, and that nonparameteric methods are often not very interpretable. The research teams and stakeholders involved in air pollution research are often diverse and inter-disciplinary. This makes it crucial that models have interpretable parameters, so that estimation results can be easily communicated to non-specialists. While the unsupervised dimension reduction methods (such as principle components analysis and clustering) identified in @davalos2017current are difficult to interpret, they note some supervised methods that consider weighted sums of pollutant concentrations. For example,  @pachon2012development specify weights from data rather than estimating them, while @roberts2006investigating introduces a model that is equivalent to assuming that $s_{1}$ is linear. While these are viable statistical methods, they are not as flexible or extensible as the GAIM.
+It is therefore crucial to extend the one-pollutant model in a way that attributes health effects to the correct mixture of pollutants, suggesting that the model should conduct inference on mixtures. As for extending the $s_{i}$ to be non-linear, there is evidence that some health outcomes are nonlinearly related to pollution levels, and that synergistic effects occur when multiple pollutants are present at higher levels [@feng2016impact; @xia2006cumulative]. These extensions make the GAIM especially well-suited to estimating nonlinear effects of (pollutant) mixtures: the smooth function(s) $s_{i}$ estimate the effects of their respective weighted sums, where the weights give the relative contribution of the components.
+
+The multiple pollutant problem has received increased intention in recent years. Five approaches are detailed in @davalos2017current. Of these 5 methods, they note that adding additive main effects can lead to biased estimates in the presence of highly correlated variables, and that nonparameteric methods are often not very interpretable. The research teams and stakeholders involved in air pollution research are often diverse and inter-disciplinary. This makes it crucial that models have interpretable parameters, so that estimation results can be easily communicated to non-specialists. While the unsupervised dimension reduction methods (such as principle components analysis and clustering) identified in @davalos2017current are difficult to interpret, they note some supervised methods that consider weighted sums of pollutant concentrations. For example,  @pachon2012development specify weights from data rather than estimating them, while @roberts2006investigating introduces a model that is equivalent to assuming that $s_{1}$ is linear. While these are viable statistical methods, they are not as flexible or extensible as the GAIM.
 
 @davalos2017current also discusses non-parametric methods, including Bayesian Kernel Machine Regression (BKMR). BKMR allows for estimation and variable selection. It was introduced in @bobb2015bayesian, and an R package was released with @bobb2018statistical. BKMR models an exposure-response surface -- the exposures can be pollutants and the response nonaccidental mortality -- via a kernel function. Using a hierarchical Bayesian variable selection method, BKMR can select one pollutant from a group of correlated ones, and is interpreted by visualizing cross-sections of a potentially high-dimensional exposure-response surface. Unlike the GAIM, it does not have easily interpretable parameters. This makes the GAIM more suitable to the communication demands of inter-disciplinary research areas such as air pollution.
 
@@ -141,8 +147,11 @@ This inquiry will make two contributions to the growing COVID-19 literature. The
 
 
 ## References 
-
+<!-- Source: https://stackoverflow.com/questions/46738721/how-can-i-bring-back-indentation-workaround-in-rmarkdown-pandoc-genuine-referenc -->
+\setlength{\parskip}{1pt}
 <div id="refs"></div>
+\setlength{\parskip}{8pt}
+
 
 
 \newpage 
@@ -165,7 +174,7 @@ Not necessary in the LOI. This will be included in the full proposal.
 
 <!-- Limit to 5 sentences. This will be expanded in a full proposal. -->
 
-The lead investigators of this proposal have a track record of publishing research results in leading statistical and epidemiological journals, and aim to publish the results of this project in high-impact journals. The results and findings of this multiple pollutant inquiry will also be shared with Health Canada and the Institut National de Santé Publique du Québec (?). 
+The lead investigators of this proposal have a track record of publishing research results in leading statistical and epidemiological journals, and aim to publish the results of this project in high-impact journals. The results and findings of this multiple pollutant inquiry will also be shared with Health Canada and the Institut National de Santé Publique du Québec. 
 
 
 # Suggested reviewers
