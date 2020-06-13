@@ -57,11 +57,18 @@ Affiliation: London School of Hygiene & Tropical Medicine
 
 
 
-# List of potential partner organizations (optional)
+# List of potential partner organizations 
 
 Centre for Global Health Research, St. Michael's Hospital  <br/>  
+
+
+
 Institut National de Santé Publique du Québec <br/>  
+
+
+
 Health Canada 
+
 
 
 \newpage
@@ -70,80 +77,57 @@ Health Canada
 
 <!-- Limit to 5 pages, including references (include all details). Will be expanded to 7 pages in the full proposal -->
 
-## Introduction 
+There is growing interest in developing a simple, intuitive air quality index that simultaneously accounts for the health effects of multiple air pollutants [@dominici2010protecting; @stieb2008new; @bopp2018something]. There is a growing understanding that the health effects of air pollution depends on the composition of the mixture of pollutants in the air, as opposed to high levels of a single pollutant [@dominici2010protecting]. An air quality index that reflects this understanding should account for the various levels and relative contributions of each air pollutant in the ambient air. In this proposal, we will introduce a statistical model designed to conduct inference on the health effects of simultaneous exposure to multiple environmental pollutants, with a focus on applications related to the health effects of air pollution. 
 
-Possible epidemiological applications include examining the health effects of environmental exposures, such as chemical mixtures, metal mixtures, pesticides, and mixtures of air pollutants [@sanders2015perinatal; @braun2016can; @lazarevic2019statistical; @bobb2015bayesian]. 
-
-The major application considered in this proposal is air pollution. 
-
-## The Model 
-
-We will develop a Bayesian implementation of the *constrained groupwise additive index model* (cGAIM), which we term the bcGAIM. The cGAIM is introduced in @pierre2020aim, but no Bayesian implementation currently exists.
-There are differences between the cGAIM and bcGAIM. We begin our discussion of these differences by introducing the cGAIM. For a response distribution $D$, parameter $\theta = (\theta_{1},\ldots,\theta_{d})$, and link function $g$, the cGAIM is,
+The *constrained groupwise additive index model* (cGAIM) is introduced by @pierre2020aim, who develops frequentist inference methods for it that use sequential quadratic programming. For a response distribution $D$, parameter $\theta = (\theta_{1}, \ldots, \theta_{d})$, link function $g$, and constraints as below, the cGAIM is,
 
 \vspace{-0.75em}
 $$
 \begin{aligned}
-  Y_{t} | \theta_{t} & \stackrel{i.i.d.}{\sim}  D( \theta_{t} ), \\
-  g( \theta ) &= X\beta + 
-        \sum\limits_{i=1}^{I} s_{i}(\alpha_{i}^{T} Z_{i} )+ 
-        \sum\limits_{k=1}^{K} f_{k}( \eta_{k} ).
+  Y_{t} | \lambda_{t} & \stackrel{i.i.d.}{\sim}  D( \lambda_{t} ), \\
+  g( \lambda_{t} ) &= X\beta + s(\alpha^{T} Z ) + f_{1}( \eta_{1} ) + \ldots + f_{k}( \eta_{k} ).
 \end{aligned}
 $$
-Here, $Y_{t}$ is the (health) outcome of interest, $X$ is a design matrix, and $\beta$ is a vector of fixed effects. The second sum consists of $K$ smoothing functions $f_{1}, \ldots, f_{K}$ applied to vector-valued confounders $\eta_{k}$. The novelty of the cGAIM lies in its first sum, which fits a smooth function to a linear combination of covariates $Z_{i}$. The cGIAM can enforce a number of hard constraints on the $\alpha_{i}$ or $s_{i}$. For example, it can constrain the entries of $\alpha_{i}$ to be non-negative and sum to one, so that $\alpha_{i}^{T}Z_{i}$ is a weighted sum (*mixture*) of the $Z_{i}$. It can also constrain the shape of the $s_{i}$ by, for example, requiring that $s_{i}$ be monotonic or convex. 
+Here, $Y_{t}$ is the outcome of interest, $\beta$ is the vector of fixed effects, and $f_{1}, \ldots, f_{K}$ are smoothing functions that account for potential confounding variables. The novelty of the cGAIM lies in $s$, a smooth function fit to a linear combination of environmental covariates $Z$ (such as air pollutants). The $\alpha$ are parameters of the cGAIM that we wish to estimate -- $\alpha$ can be constrained to have non-negative components that sum to one, so that it is a vector of weights on the entries of $Z$. Once estimated, these weights give the relative contribution of each component of $Z$ to $\alpha^{T}Z$. In addition to constraining $\alpha$, the cGAIM can also constrain the shape of the smooth function $s$ by, for example, requiring it to be monotonic or convex. 
 
-The cGAIM uses an iterative two-step optimization scheme. In the first step, the $\alpha_{i}$ are updated using a quadratic program. In the second step, the $s_{i}$ are updated using the shape-constrained additive model methodology [@pya2015shape]. The bcGAIM will initially be implemented in Stan, a statistical modeling language that performs optimization using Hamiltonian Monte Carlo [@carpenter2017stan]. With Stan performing the optimization, the main task for implementing the bcGAIM in Stan is in developing priors that enforce the constraints seen in the cGAIM. For a simple example of this task, setting a Dirichlet prior on $\alpha_{i}$ constrains it to be a vector of weights [@betancourt2012cruising]. 
+We will develop a Bayesian implementation of the cGAIM -- the bcGAIM. Compared to the cGAIM, the bcGAIM provides two main statistical benefits. The first is credible intervals for $\alpha$; the cGAIM does not provide confidence intervals for $\alpha$. Quantifying the uncertainty of the estimates for $\alpha$ is important for a very important scientific question -- can the bcGAIM determine how much specific pollutants contribute to polluted air? Narrow credible intervals indicate that it can attribute the health effects to specific pollutants. Wide credible intervals indicate that it can identify the health effects but not attribute them to specific pollutants. Either result would be a significant contribution to the development of multiple pollutant models, as it would provide evidence on if the health effects of air pollution can be associated to particular pollutants (through $\alpha$) or only to a mixture of pollutants (through $s(\alpha^{T}Z)$). The second advantage is that the bcGAIM can identify and address multi-modality in the posterior of $\alpha$. If $\alpha$ is multi-modal under an uniformative prior, one can use relevant scientific knowledge to place stronger priors on $\alpha$. In comparison, the cGAIM only provides a point estimate for $\alpha$ and cannot detect multi-modality.
 
-Setting priors to enforce shape constraints is much more challenging. In addition to being free of unwanted behavior, the chosen prior should be simple and interpretable so that non-statistical experts can use it. This is difficult to achieve for shape constraints. The first reason for this is that $s_{i}$ may not have any parameters related to the desired constraint; for example, a 1^st^-order random walk has no parameters related to monotonicity. To overcome this, $s_{i}$ could be re-parameterized, the functional form of $s_{i}$ could be exploited, or data augmentation schemes that introduce derivative observations could be used [@riihimaki2010gaussian]. The second reason is that substantial mathemtical analysis is required to ensure priors do not introduce unwanted behavior. For example, a truncated multivariate normal (tMVN) prior can induce monotonicity when placed on the coefficients $\beta^{'}$ of a finite basis expansion of $s_{i}$ [@maatouk2017gaussian]. However, the tMVN prior places neglible mass in near-flat regions of $s_{i}$. While @zhou2020truncated remedy this by introducing a scale parameter to the coordinates of the tMVN distribution, the modified tMVN prior is placed on $\beta^{'}$, not $s_{i}$. In comparison to the tMVN prior, we seek a prior on $s_{i}$ that enforces monotonicity, so that it can be easily explained to non-statistical experts. 
- 
-**ADD**: Why the bcGAIM - what are its advantages over the cGAIM? Finally, following its implementation in Stan, the bcGAIM will be implemented using non-MCMC inference methods, similar to Iterated Nested Laplace Approximation (INLA) [@rue2009approximate]. These methods provide computational and ease-of-use and benefits, and will expand the types of problems and number of users who can make use of the bcGAIM methodology. 
+We will also explore using different response distributions. The standard single pollutant model is the log-linear Poisson model [@dominici2002use; @liu2019ambient].\footnote{Let the average rate the outcome occurs on day $t$ be denoted $\lambda_{t}$, and the single pollutant in the model be denoted $P_{t}$. The one-pollutant model is a special case of the cGAIM with a Poisson response distribution -- $g(\lambda_{t}) = \log(\lambda_{t})$ is the link function, $Z = P_{t}$ is the covariate of interest, $s(\alpha P_{t}) = \alpha P_{t}$ is the identity function, and there are no constraints.} The case crossover has seen increased attention in the air pollution literature [@wei2019short; @stringer2018cco]. It can be viewed as a conditional Poisson model, obtained by stratifying by subject and conditioning on the number of events $Y_{t}$ occurring in an observation period. Additional details on the differences between these two models is given in the Methods section.
 
 
+## Objectives
+
+This proposal has three main research objectives. The first is in developing an air quality index for Canadian air pollution that accounts for the health effects of a mixture of air pollutants. This index will be shared with Health Canada and INSQ. The second will be applications in other epidemiological studies that involve exposures to mixtures of environmental pollutants. Other health applications where mixtures of exposures have garnered some interest include chemical mixtures, metal mixtures, and pesticides [@sanders2015perinatal; @braun2016can; @lazarevic2019statistical; @bobb2015bayesian], and these applications will be actively explored with the Centre of Global Health Research during the course of this project. The third application is a specific application of the air quality index, namely investigating how long-term exposure to different mixtures of pollutants affects COVID-19 mortality. 
+
+Inter-disciplinary research teams and stakeholders conduct air pollution research. It is therefore crucial that air pollution models have interpretable parameters, so that estimation results (and their associated uncertainty) can be easily communicated to non-specialists. There is evidence that the health effects the single pollutant model attributes to $P_{t}$ may be caused by a correlated pollutant not in the model. For example, @franklin2008impact found that the effect of ozone on non-accidental mortality was "substantially reduced" after adjusting for sulfate and @liu2019ambient found significant differences in the percentage change of all-cause mortality attributable to PM~2.5~ and PM~10~ after adjusting for NO~2~ or SO~2~. 
+
+Many modeling approaches have been applied to the multiple pollutant model. Supervised methods that consider mixtures of pollutants include @pachon2012development, who specifies weights from data rather than estimating them, and @roberts2006investigating, who introduce a model that is equivalent to assuming that $s$ is linear. However, there is evidence that some health outcomes are nonlinearly related to health outcomes levels [@feng2016impact; @xia2006cumulative]. Compared to these models, the bcGAIM is more flexible. It estimates its weights from data, and specifies a nonlinear relationship between the mixture of pollutants and the health outcome. Meanwhile, the results of unsupervised methods (such as principle components analysis and clustering) are difficult to interpret [@davalos2017current]. A popular nonparameteric method is the Bayesian Kernel Machine Regression (BKMR), introduced in @bobb2015bayesian. The BKMR models an exposure-response surface via a kernel function. Using a hierarchical Bayesian variable selection method, it can select one pollutant from a group of correlated ones, and is interpreted by visualizing cross-sections of a potentially high-dimensional exposure-response surface. Unlike the bcGAIM, the BKMR does not have easily interpretable parameters. This makes the bcGAIM more suitable to the communication needs of an inter-disciplinary research team -- it has interpretable parameters ($\alpha$) that enable easily communicable results regarding the health effects of multiple air pollutants.
+
+## ADD: Global Health paragraph
+
+The relationship between daily COVID-19 deaths and air pollution levels has become an active area of research. For instance, @wu2020exposure apply a zero-inflated negative bionomial to model U.S. data, where the zero-inflation accounts for counties with no COVID-19 deaths. They find that a 1 $\mu$g increase in long-term exposure to ambient PM~2.5~ increases the COVID-19 death rate by 15%. Additional studies that examine this relationship include @conticini2020can, @sciomer2020sars, and @setti2020searching. 
+
+However, much work remains to be done. For example, we do not have an accurate measure of excess deaths attributable to COVID-19, due to potential under-reporting of COVID-19 case and death counts. Moreover, cumulative COVID-19 mortality will continue to rise for some time, making the question of excess deaths best suited to an ongoing inquiry. We will use the bcGAIM to examine the relationship between COVID-19 deaths and long-term exposure to air pollution. Compared to the log-linear negative binomial model in @wu2020exposure, the GAIM is scalable, interpretable, and can capture non-linearities in the relationship between mixtures and the response. Applying the bcGAIM to air pollution and COVID-19 death data will allow us to ascertain which mixtures of pollutants increase COVID-19 mortality.
+
+Therefore, this inquiry will help determine which mixtures of air pollutants most increase COVID-19 deaths, and help identify how the effect of air pollution differs among age groups. In particular, COVID-19 and air pollution both disproportionately affect vulnerable populations such as seniors. Determining how much of this is attributable to air pollution would be a significant contribution that will further our understanding of the relationship between COVID-19 deaths and air pollution.
 
 
-## Research Questions
+## Methods
 
-In the course of this project, we will use the GAIM to explore the health effects of multiple air pollutants. Recent years have seen increased interest in modeling the joint effect of two or more pollutants in health outcomes [@dominici2010protecting; @billionnet2012estimating; @davalos2017current]. Bayesian approaches can be seen in @blangiardo2019hierarchical, @bobb2013reduced, and @huang2018multivariate. We will consider two research questions in the course of our inquiry, namely,
+The bcGAIM will make four major contributions to modeling the health effects of mixtures of pollutants.
+
+  1. Extending the cGAIM to higher dimensional problems.
+  2. Fully exploring the parameter space using posterior distributions, particularly for $\alpha$.
+  3. Developing priors for shape-constrained Bayesian inference on the smooth function $s$.
+  4. Comparing estimation results under the log-linear Poisson and case crossover models.
   
-  1. What is the combined effect of multiple pollutants on various daily mortality outcomes?, and
-  2. What is the relationship between daily COVID-19 mortality/morbidity and air pollution? 
-  
-  
-### Question 1
+In @pierre2020aim, the cGAIM uses an iterative two-step optimization scheme -- $\alpha$ is updated using a quadratic program, then $s$ is updated using the shape-constrained additive model methodology of @pya2015shape. The bcGAIM will initially be implemented in Stan, a statistical modeling language that performs optimization using Hamiltonian Monte Carlo [@carpenter2017stan]. The Stan modeling language makes it straightforward to extend the bcGAIM to include additional pollutants, additional lags for pollutants in the model, and additional smooth functions $s$. Up to having suitable priors, all 3 extensions only require adding terms to a sum in Stan. Following its implementation in Stan, the bcGAIM will be implemented using non-MCMC inference methods, similar to Iterated Nested Laplace Approximation (INLA) [@rue2009approximate]. These non-MCMC methods provide significant computational and ease-of-use benefits, and will expand the types of problems and number of users who can use the bcGAIM methodology. Finally, to faciliate use by other researchers, all bcGAIM software will be released in an R package.
 
-The workhorse of the (predominantly frequentist) air pollution literature is the one-pollutant log-linear Poisson regression model. This model accounts for confounders using fixed effects and smooth functions, such as the natural cubic spline [@dominici2002use; @liu2019ambient]. Let the average rate an outcome occurs on day $t$ be denoted by $\lambda_{t}$. Then, a typical one-pollutant model (with pollutant $P_{1,t}$) is, 
+Using a Bayesian approach to estimate the health effects of mixtures of pollutants has numerous benefits. Being Bayesian allows us to obtain posterior distributions and credible intervals for all model paramters. This is particularly beneficial with $\alpha$, as different values of $\alpha$ could maximize the posterior. In other words, different combinations of pollutants could have the same effect on health outcomes. It is very important to be able to identify if these different values exist, and what those values are. The practical implication is that an air quality index must consider the value of multiple pollutants when providing guidelines. Furthermore, we could if desired address the multi-modality of $\alpha$ by constructing scientifically justified priors that encourage $\alpha$ towards one of its modes. For example, this could be done if there was evidence from the composition of each pollutant that one was more responsible for the health effects than the others. 
 
-\vspace{-0.50em}
-$$
-\begin{aligned}
-  Y_{t} | \lambda_{t} &= \text{Poisson}(\lambda_{t}), \\
-  \log(\lambda_{t}) &= X\beta + \gamma_{1} P_{1,t} + \sum\limits_{k=1}^{K} f_{k}(\eta_{k}).
-\end{aligned}
-$$
-Here, $Y_{t}$ is the health outcome of interest, such as respiratory mortality or morbidity. The design matrix $X$ contains day-of-the-week effects and seasonal terms, and the $f_{i}(\eta_{k,*})$ are smooth functions of potential confounders such as time and temperature. One extension of this model would fit $P_{1,t}$ to a smooth function $s_{1}$. More generally, we could fit $N$ pollutants to $N$ smooth functions, $s_{1}, \ldots, s_{N}$. A third alternative, which we propose here, is to model $N$ pollutants using the GAIM. 
+A major task in developing the bcGAIM is in developing priors for shape-constrained Bayesian inference on $s$. In addition to being free of unwanted behavior, the chosen priors should be simple and interpretable so that non-statistical experts can use it. This is difficult to achieve for shape constraints. The first reason for this is that $s_{i}$ may not have any parameters related to the desired constraint; for example, a 1^st^-order random walk has no parameters related to monotonicity. To overcome this, $s$ could be re-parameterized, the functional form of $s$ could be exploited, or data augmentation schemes that introduce derivative observations could be used [@riihimaki2010gaussian]. The second reason is that substantial mathemtical analysis is required to ensure priors do not introduce unwanted behavior. For example, a truncated multivariate normal (tMVN) prior can induce monotonicity when placed on the coefficients $\beta^{'}$ of a finite basis expansion of $s$ [@maatouk2017gaussian]. However, the tMVN prior places neglible mass on near-flat regions of $s$. While @zhou2020truncated remedy this by introducing a scale parameter to the coordinates of the tMVN distribution, the modified tMVN prior is placed on $\beta^{'}$, not $s$. In comparison to the tMVN prior, we seek a prior on $s$ and not its basis expansion. Such a prior will be less encumbered by mathematical details and more easily understood by non-statistical experts. This ease of interpretation should encourage adoption of the bcGAIM among non-statistical experts, one of the goals of the bcGAIM projects.
 
-Air pollution is an excellent application area for the bcGAIM. People are exposed to the mixture of pollutants in their environment, many of which are highly correlated [@guowen2020multi]. Thus, health effects the single pollutant model attributes to $P_{1}$ may very well be caused by a correlated pollutant, or only be present within certain combinations of a mixture of pollutants. Indeed, @franklin2008impact found that the effect of ozone on non-accidental mortality was "substantially reduced" after adjusting for particle sulfate. In @liu2019ambient, the authors found significant differences in the percentage change in all-cause mortality attributable to PM~2.5~ and PM~10~ when adjusting for NO~2~ or SO~2~.
-
-Like the cGAIM, the bcGAIM is a flexible and extensible statistical model. The researcher can choose the number $I$ of smooth functions $s_{i}$ and the number of covariates $n_{i}$ in each $s_{i}$. For example, an air pollution model could have one smooth function $s_{1}$ and two covariates $\gamma_{1,t}$ and $\gamma_{2,t}$, where $\gamma_{1,t}$ is the time-varying concentration of ozone (O~3~) and $\gamma_{2,t}$ is the time-varying concentration of particulate matter smaller than 2.5 $\mu$g (PM~2.5~). In this case, the weights $\alpha = (\alpha_{1}, \alpha_{2})$ give the relative contribution of O~3~ and PM~2.5~ to the health outcome of interest. Alternatively, the model could have 3 additional pollutants -- nitrogen dioxide (NO~2~), sulfur dioxide (SO~2~), and particulate matter smaller than 10 $\mu$g (PM~10~) -- such that the 5 weights give the relative contribution of each pollutant. The model could also include interaction terms, or additional smooth functions $s_{i}$ that group (for example) correlated pollutants.
-
-It is therefore crucial to extend the one-pollutant model in a way that attributes health effects to the correct mixture of pollutants, suggesting that the model should conduct inference on mixtures. As for extending the $s_{i}$ to be non-linear, there is evidence that some health outcomes are nonlinearly related to pollution levels, and that synergistic effects occur when multiple pollutants are present at higher levels [@feng2016impact; @xia2006cumulative]. These extensions make the GAIM especially well-suited to estimating nonlinear effects of (pollutant) mixtures: the smooth function(s) $s_{i}$ estimate the effects of their respective weighted sums, where the weights give the relative contribution of the components.
-
-The multiple pollutant problem has received increased intention in recent years. Five approaches are detailed in @davalos2017current. Of these 5 methods, they note that adding additive main effects can lead to biased estimates in the presence of highly correlated variables, and that nonparameteric methods are often not very interpretable. The research teams and stakeholders involved in air pollution research are often diverse and inter-disciplinary. This makes it crucial that models have interpretable parameters, so that estimation results can be easily communicated to non-specialists. While the unsupervised dimension reduction methods (such as principle components analysis and clustering) identified in @davalos2017current are difficult to interpret, they note some supervised methods that consider weighted sums of pollutant concentrations. For example,  @pachon2012development specify weights from data rather than estimating them, while @roberts2006investigating introduces a model that is equivalent to assuming that $s_{1}$ is linear. While these are viable statistical methods, they are not as flexible or extensible as the GAIM.
-
-@davalos2017current also discusses non-parametric methods, including Bayesian Kernel Machine Regression (BKMR). BKMR allows for estimation and variable selection. It was introduced in @bobb2015bayesian, and an R package was released with @bobb2018statistical. BKMR models an exposure-response surface -- the exposures can be pollutants and the response nonaccidental mortality -- via a kernel function. Using a hierarchical Bayesian variable selection method, BKMR can select one pollutant from a group of correlated ones, and is interpreted by visualizing cross-sections of a potentially high-dimensional exposure-response surface. Unlike the GAIM, it does not have easily interpretable parameters. This makes the GAIM more suitable to the communication demands of inter-disciplinary research areas such as air pollution.
-
-While there has been significant research interest in the multiple pollutant problem, the models proposed to date have either computational limitations or limited interpretability. In contrast, the GAIM has interpretable parameters and its computational burden does not scale with the dimensionality of its inputs. Therefore, using the GAIM to examine the health effect of a mixture of pollutants will provide interpretable and communicable results on this research question. Finally, note that while air pollution is the main example in this proposal, the GAIM has applications wherever the target of inference is a mixture of covariates that relate nonlinearly to an outcome of interest. 
-
-
-### Question 2
-
-The relationship between daily COVID-19 deaths and air pollution levels has become an active area of research in recent months. For instance, @wu2020exposure apply a zero-inflated negative bionomial model U.S. data, where the zero-inflation accounts for U.S. counties with no COVID-19 deaths. They use a log-linear link function with a state-level random effect, and find that a 1 $\mu$g increase in long-term exposure to ambient PM~2.5~ increases the COVID-19 death rate by 15%. Additional studies that examine this relationship include @conticini2020can, @sciomer2020sars, and @setti2020searching. 
-
-However, much work remains to be done. For instance, non-COVID-19 daily mortality data is generally not yet available, such that we do not have an accurate measure of excess deaths attributable to COVID-19, especially among vulnerable populations such as seniors. These excess deaths could be attributable to under-reported COVID-19 case and death counts (due to limited testing), restricted access to care for patients with other health conditions, or potential reporting delays. Moreover, cumulative COVID-19 mortality will likely continue to rise for some time, making the question of excess deaths due to COVID-19 best suited to an ongoing inquiry that may help inform subsequent public health responses.
-
-We will use the GAIM to examine the relationship between COVID-19 deaths and long-term exposure to air pollution. Compared to the log-linear negative binomial model in @wu2020exposure, the GAIM is scaleable, interpretable, and can capture non-linearities in the relationship between mixtures and the response. To apply the GAIM to this research question, we must choose the outcome of interest $Y_{t}$ as COVID-19 deaths. To specifically investigate seniors, we may (for example) take $Y_{t}$ to be those aged 65+. Applying the GAIM to air pollution and COVID-19 death data will allow us to ascertain which mixtures of pollutants increase COVID-19 mortality, as well as how their effects differ among age groups. 
-
-This inquiry will make two contributions to the growing COVID-19 literature. The first is that it will help determine how different mixtures of air pollutants amplify the impact of COVID-19. The second is that since people in different regions are exposed to different mixtures of pollutants, it will help identify which mixtures of pollutants have the largest impact on COVID-19 deaths. Both contributions will also further our understanding of the health impacts of air pollution.
+## ADD: Poisson vs. Case Crossover paragraph
 
 
 ## References 
@@ -179,13 +163,13 @@ The lead investigators of this proposal have a track record of publishing resear
 
 # Suggested reviewers
 
-Any suggestions? 
+Will be contributed by Patrick.
 
 # Five CVs
 
 <!-- Degrees, current position(s), selected peer-reviewed publications (last 6 years), other evidence of impact and contributions (last 6 years), and numbers of undergraduate, master’s level, PhD level and postdoctoral trainees (last 6 years). --> 
 
-  - Patrick, Fateh, Hwashin, Meredith (?), Cindy  
+  - Patrick, Fateh, Hwashin, Meredith, Cindy. I have obtained the 5 CVs and must add them.
 
 
 # Preliminary budget description
@@ -194,7 +178,6 @@ Any suggestions?
 
 The CANSSI Collaborative Research Team (CRT) grant is for $180,000 over 3 years. We propose the budget:
 
-  1. $30,000/year to support post-doctoral funding.
-  2. $12,000/year to support a Laval University or University of Ottawa PhD student.
-  3. $12,000/year to support a University of Toronto PhD student.
-  4. $6,000/year to support travel to/from the cities of the lead investigators -- Toronto, Ottawa, and Quebec -- and annual team meetings held around the Statistical Society of Canada conference.
+  1. \$30,000/year to support a post-doctoral student.
+  2. \$24,000/year to support two PhD students (\$12,000 per student).
+  4. \$6,000/year to support travel to/from the cities of the lead investigators -- Toronto, Ottawa, and Quebec -- and annual team meetings held around the Statistical Society of Canada conference.
