@@ -1,151 +1,149 @@
 ---
-title: "Modeling Linear Combinations of Multiple Pollutants for Health Outcomes"
+title: ""
 output:
   pdf_document:
     latex_engine: xelatex
-header-includes:
-  - \usepackage{fontspec}
-  - \usepackage{geometry}
-bibliography: CANSSI_Grant.bib
+biblatex: 1
+biblio-style: authoryear,backend=biber
+biblatexoptions: 
+  - maxbibnames = 20
+  - maxcitenames = 2
+  - doi = false
+  - isbn = false
+  - giveninits = true
+  - uniquelist = false
+bibliography: "CANSSI_Grant.bib"
 geometry: margin=1in 
 fontsize: 12pt
 documentclass: article
 classoption: letterpaper
 link-citations: true
 csl: journal-of-the-royal-statistical-society.csl
+font: "Times New Roman"
 ---
 
-\setmainfont{Calibri}
 \vspace{-2em}
 
-# Name and affiliations of lead investigators
+**Title of the Project**: Statistical Methods for Daily Mortality and Multiple Environmental Risk Factors
 
-Name: Professor Patrick Brown <br/>  
-Affiliations: Centre for Global Health Research, St. Michael's Hospital <br/>  
-             \hspace*{52.5pt} Department of Statistical Sciences, University of Toronto
+**Name and affiliations of lead investigators**
 
-Name: Professor Fateh Chebana <br/>  
-Affiliation: Institut national de la recherche scientifique 
+- Patrick E. Brown
+    - Centre for Global Health Research, St. Michael's Hospital
+    - Department of Statistical Sciences, University of Toronto
+- Fateh Chebana 
+    - Centre Eau Terre Environnement, Institut national de la recherche scientifique, Québec.
+- Cindy Feng 
+    - School of Epidemiology and Public Health, University of Ottawa
+- Meredith Franklin 
+    - Keck School of Medicine, University of Southern California (until July 2021) 
+    - School for the Environment and Department of Statistical Sciences, University of Toronto (from July 2021)
 
-Name: Professor Cindy Feng <br/>  
-Affiliation: School of Epidemiology and Public Health, University of Ottawa
 
-
-
-# List of proposed collaborators, titles, and affiliations
+**List of proposed collaborators, titles, and affiliations**
 
 Name: Kamal Rai <br/>  
-Title: PhD <br/>  
+Title: PhD student<br/>  
 Affiliations: Centre for Global Health Research, St. Michael's Hospital <br/>  
-             \hspace*{52.5pt} Department of Statistical Sciences, University of Toronto
+              \hspace*{61.5pt} Department of Statistical Sciences, University of Toronto
 
 
 Name: Hwashin Shin <br/>  
-Title: Adjunct Associate Professor (?) <br/>  
-Affiliations: Environmental Health Science and Research Bureau, Health Canada <br/>  
-             \hspace*{52.5pt} Department of Mathematics and Statistics, Queen's University 
+Title: Scientist <br/>  
+Affiliation: Environmental Health Science and Research Bureau, Health Canada <br/>  
 
 Name: Céline Campagna <br/>  
-Title: PhD <br/>  
-Affiliation: Institut National de Santé Publique du Québec
+Title: Responsable scientifique <br/>  
+Affiliation: Équipe Changements climatiques et santé, Institut National de Santé Publique du Québec
 
 
 Name: Pierre Masselot <br/>  
 Title: Research Fellow <br/>    
-Affiliation: London School of Hygiene & Tropical Medicine
+Affiliation: London School of Hygiene & Tropical Medicine, UK
    
 
+**List of potential partner organizations**
+
+- The **Centre for Global Health Research, St. Michael's Hospital** will lead the health sciences research component of the project, providing data from the US and India and time of research staff to work on manuscripts. The Toronto-based component of the team will be located at CGHR and will be integrated into the Geospatial Mortality research group Dr. Brown leads, and a portion of the Toronto PhD student's salary will be funded though one of CGHR's research grants.
+
+- **L'Institut National de Santé Publique du Québec** has the mandate to analyse, monitor and evaluate determinants of health, including environmental pollutants, and will give access to the Quebec provincial health databases. In-kind support will also include health expertise for the statistical design and interpretation of research, including co-supervision of students.
+
+- Hwashin Shin at **Health Canada** is central to this project. Her needs for an improved air quality indicator instigated the discussions which lead to this application. Dr. Shin has been funding Dr. Brown's team through Health Canada research contracts, and intends to provide at least $15,000 per year to the project.
 
 
-# List of potential partner organizations 
-
-Centre for Global Health Research, St. Michael's Hospital  <br/>  
-
-
-
-Institut National de Santé Publique du Québec <br/>  
-
-
-
-Health Canada 
-
-
-
-\newpage
-
-# Research Aims
+\clearpage
+**Research Aims**
 
 <!-- Limit to 5 pages, including references (include all details). Will be expanded to 7 pages in the full proposal -->
 
-There is growing interest in developing a simple, intuitive air quality index that simultaneously accounts for the health effects of multiple air pollutants [@dominici2010protecting; @stieb2008new; @bopp2018something]. There is a growing understanding that the health effects of air pollution depends on the composition of the mixture of pollutants in the air, as opposed to high levels of a single pollutant [@dominici2010protecting]. An air quality index that reflects this understanding should account for the various levels and relative contributions of each air pollutant in the ambient air. In this proposal, we will introduce a statistical model designed to conduct inference on the health effects of simultaneous exposure to multiple environmental pollutants, with a focus on applications related to the health effects of air pollution. 
+**Overview**
+
+There is growing interest in developing a simple, intuitive air quality index that simultaneously accounts for the health effects of multiple air pollutants [@dominici2010protecting; @stieb2008new; @bopp2018something]. Health effects of air pollution depend on the composition of pollutants in the air, not simply the levels of a single pollutant [@dominici2010protecting]. An air quality index that reflects this understanding should account for the various levels and relative contributions of each air pollutant in the ambient air. In this proposal, we will improve statistical methods for conducting inference on the health effects of simultaneous exposure to multiple environmental pollutants, with a focus on quantifying short-term effects of poor air quality on health outcomes at the population-level.
 
 The *constrained groupwise additive index model* (cGAIM) is introduced by @pierre2020aim, who develops frequentist inference methods for it that use sequential quadratic programming. For a response distribution $D$, parameter $\theta = (\theta_{1}, \ldots, \theta_{d})$, link function $g$, and constraints as below, the cGAIM is,
 
 \vspace{-0.75em}
 $$
 \begin{aligned}
-  Y_{t} | \lambda_{t} & \stackrel{i.i.d.}{\sim}  D( \lambda_{t} ), \\
-  g( \lambda_{t} ) &= X\beta + s(\alpha^{T} Z ) + f_{1}( \eta_{1} ) + \ldots + f_{k}( \eta_{k} ).
+  Y_{t} | \lambda_{t} & \stackrel{i.i.d.}{\sim}  D( \lambda_{t}, \tau ) \\
+  g( \lambda_{t} ) &= X_t\beta + s(\alpha^{T} Z_t ) + f_{1}( W_{1t} ) + \ldots + f_{K}( W_{Kt} ).
 \end{aligned}
 $$
-Here, $Y_{t}$ is the outcome of interest, $\beta$ is the vector of fixed effects, and $f_{1}, \ldots, f_{K}$ are smoothing functions that account for potential confounding variables. The novelty of the cGAIM lies in $s$, a smooth function fit to a linear combination of environmental covariates $Z$ (such as air pollutants). The $\alpha$ are parameters of the cGAIM that we wish to estimate -- $\alpha$ can be constrained to have non-negative components that sum to one, so that it is a vector of weights on the entries of $Z$. Once estimated, these weights give the relative contribution of each component of $Z$ to $\alpha^{T}Z$. In addition to constraining $\alpha$, the cGAIM can also constrain the shape of the smooth function $s$ by, for example, requiring it to be monotonic or convex. 
+Here $Y_{t}$ is the outcome of interest, $\beta$ is the vector of regression coefficients for linear covariates $X_t$, and $f_{1}, \ldots, f_{K}$ are smoothing functions that account for potential confounding variables $W_{kt}$. The distinguishing feature of cGAIM lies in $s$, a smooth function fit to a linear combination of environmental covariates $Z_t$. The $\alpha$ is a vector of weights on the entries of $Z_t$, giving the relative contribution of each component of $Z_t$. The smooth function $s$ is modelled with a flexible parametric family such as cubic splines or a random walk. Estimating $\alpha$, or more specifically finding the set of plausible values for $\alpha$, is the main challenge of working with cGAIM.
 
-We will develop a Bayesian implementation of the cGAIM -- the bcGAIM. Compared to the cGAIM, the bcGAIM provides two main statistical benefits. The first is credible intervals for $\alpha$; the cGAIM does not provide confidence intervals for $\alpha$. Quantifying the uncertainty of the estimates for $\alpha$ is important for a very important scientific question -- can the bcGAIM determine how much specific pollutants contribute to polluted air? Narrow credible intervals indicate that it can attribute the health effects to specific pollutants. Wide credible intervals indicate that it can identify the health effects but not attribute them to specific pollutants. Either result would be a significant contribution to the development of multiple pollutant models, as it would provide evidence on if the health effects of air pollution can be associated to particular pollutants (through $\alpha$) or only to a mixture of pollutants (through $s(\alpha^{T}Z)$). The second advantage is that the bcGAIM can identify and address multi-modality in the posterior of $\alpha$. If $\alpha$ is multi-modal under an uninformative prior, one can use relevant scientific knowledge to place stronger priors on $\alpha$. In comparison, the cGAIM only provides a point estimate for $\alpha$ and cannot detect multi-modality.
+We will develop a Bayesian methodology for inference with the cGAIM -- the bcGAIM. Compared to the cGAIM, the bcGAIM will provide two main statistical benefits. The first is quantification of the uncertainty for $\alpha$; the cGAIM does not provide confidence intervals for $\alpha$. Given that pollutants tend to be positively correlated, it is possible that $\alpha$ is not well identified and all reasonable measures of air quality are equally predictive of health outcomes.  It is also possible that the posterior distribution of $\alpha$ is narrow and the importance of, say, nitrous oxide relative to ozone can be estimated with some certainty.  Either result would be a significant contribution research on the health effects of multiple pollutant.  The second advantage is that the bcGAIM will be able to accommodate a higher-dimensional $\alpha$ than previously used, allowing $Z_t$ to contain pollution levels at different time lags. The joint posterior distributions of this high-dimensional $\alpha$ for different health outcomes will provide information on how quickly poor air quality affects various types of mortality and morbidity (or quite possibly show that multiple combinations of recent air quality measures are equally predictive).
 
-We will also explore using different response distributions. The standard single pollutant model is the log-linear Poisson model [@dominici2002use; @liu2019ambient].\footnote{Let the average rate the outcome occurs on day $t$ be denoted $\lambda_{t}$, and the single pollutant in the model be denoted $P_{t}$. The one-pollutant model is a special case of the cGAIM with a Poisson response distribution -- $g(\lambda_{t}) = \log(\lambda_{t})$ is the link function, $Z = P_{t}$ is the covariate of interest, $s(\alpha P_{t}) = \alpha P_{t}$ is the identity function, and there are no constraints.} The case crossover has seen increased attention in the air pollution literature [@wei2019short; @stringer2018cco]. It can be viewed as a conditional Poisson model, obtained by stratifying by subject and conditioning on the number of events $Y_{t}$ occurring in an observation period. Additional details on the differences between these two models is given in the Methods section.
-
-
-## Objectives
-
-This proposal has three main research objectives. The first is in developing an air quality index for Canadian air pollution that accounts for the health effects of a mixture of air pollutants. This index will be shared with Health Canada and INSQ. The second will be applications in other epidemiological studies that involve exposures to mixtures of environmental pollutants. Other health applications where mixtures of exposures have garnered some interest include chemical mixtures, metal mixtures, and pesticides [@sanders2015perinatal; @braun2016can; @lazarevic2019statistical; @bobb2015bayesian], and these applications will be actively explored with the Centre of Global Health Research during the course of this project. The third application is a specific application of the air quality index, namely investigating how long-term exposure to different mixtures of pollutants affects COVID-19 mortality. 
-
-Inter-disciplinary research teams and stakeholders conduct air pollution research. It is therefore crucial that air pollution models have interpretable parameters, so that estimation results (and their associated uncertainty) can be easily communicated to non-specialists. There is evidence that the health effects the single pollutant model attributes to $P_{t}$ may be caused by a correlated pollutant not in the model. For example, @franklin2008impact found that the effect of ozone on non-accidental mortality was "substantially reduced" after adjusting for sulfate and @liu2019ambient found significant differences in the percentage change of all-cause mortality attributable to PM~2.5~ and PM~10~ after adjusting for NO~2~ or SO~2~. 
-
-Many modeling approaches have been applied to the multiple pollutant model. Supervised methods that consider mixtures of pollutants include @pachon2012development, who specifies weights from data rather than estimating them, and @roberts2006investigating, who introduce a model that is equivalent to assuming that $s$ is linear. However, there is evidence that some health outcomes are nonlinearly related to health outcomes levels [@feng2016impact; @xia2006cumulative]. Compared to these models, the bcGAIM is more flexible. It estimates its weights from data, and specifies a nonlinear relationship between the mixture of pollutants and the health outcome. Meanwhile, the results of unsupervised methods (such as principle components analysis and clustering) are difficult to interpret [@davalos2017current]. A popular nonparameteric method is the Bayesian Kernel Machine Regression (BKMR), introduced in @bobb2015bayesian. The BKMR models an exposure-response surface via a kernel function. Using a hierarchical Bayesian variable selection method, it can select one pollutant from a group of correlated ones, and is interpreted by visualizing cross-sections of a potentially high-dimensional exposure-response surface. Unlike the bcGAIM, the BKMR does not have easily interpretable parameters. This makes the bcGAIM more suitable to the communication needs of an inter-disciplinary research team -- it has interpretable parameters ($\alpha$) that enable easily communicable results regarding the health effects of multiple air pollutants.
-
-## ADD: Global Health paragraph
-
-The relationship between daily COVID-19 deaths and air pollution levels has become an active area of research. For instance, @wu2020exposure apply a zero-inflated negative binomial to model U.S. data, where the zero-inflation accounts for counties with no COVID-19 deaths. They find that a 1 $\mu$g increase in long-term exposure to ambient PM~2.5~ increases the COVID-19 death rate by 15%. Additional studies that examine this relationship include @conticini2020can, @sciomer2020sars, and @setti2020searching. 
-
-However, much work remains to be done. For example, we do not have an accurate measure of excess deaths attributable to COVID-19, due to potential under-reporting of COVID-19 case and death counts. Moreover, cumulative COVID-19 mortality will continue to rise for some time, making the question of excess deaths best suited to an ongoing inquiry. We will use the bcGAIM to examine the relationship between COVID-19 deaths and long-term exposure to air pollution. Compared to the log-linear negative binomial model in @wu2020exposure, the GAIM is scalable, interpretable, and can capture non-linearities in the relationship between mixtures and the response. Applying the bcGAIM to air pollution and COVID-19 death data will allow us to ascertain which mixtures of pollutants increase COVID-19 mortality.
-
-Therefore, this inquiry will help determine which mixtures of air pollutants most increase COVID-19 deaths, and help identify how the effect of air pollution differs among age groups. In particular, COVID-19 and air pollution both disproportionately affect vulnerable populations such as seniors. Determining how much of this is attributable to air pollution would be a significant contribution that will further our understanding of the relationship between COVID-19 deaths and air pollution.
+We will also develop method for fitting a case/crossover models using bcGAIM, which offers advantages over the more standard log-linear Poisson model.  The case crossover has seen increased attention in the air pollution literature [@wei2019short; @casecrossover]. It can be viewed as a proportional hazards survival model, where each individual is in a separate strata and 'control days' are chosen to have the same baseline hazard as the event day.  Additional details are given in the Methods section below.
 
 
-## Methods
+**Objectives**
 
-The bcGAIM will make four major contributions to modeling the health effects of mixtures of pollutants.
+This proposal has three main research objectives. The first is to develop an air quality index for Canadian cities that accounts for the combined effects of multiple air pollutants. This index will be developed in collaboration with Health Canada and INSQ with the intention of it being used in a public warning system. The second aim is undertake epidemiological studies involving exposures to multiple environmental pollutants in the areas of the world where the Centre for Global Health Research has suitable data (Canada, India, USA). The third application is a specific application of the air quality index, namely investigating how exposure to different mixtures of pollutants affects daily COVID-19 mortality. 
 
-  1. Extending the cGAIM to higher dimensional problems.
-  2. Fully exploring the parameter space using posterior distributions, particularly for $\alpha$.
-  3. Developing priors for shape-constrained Bayesian inference on the smooth function $s$.
-  4. Comparing estimation results under the log-linear Poisson and case crossover models.
+There is evidence that the health effects estimated from single pollutant models may be in fact be caused by a correlated pollutant omitted from  the model. For example, @franklin2008impact found that the effect of ozone on non-accidental mortality was "substantially reduced" after adjusting for particle sulfate and @liu2019ambient found significant differences in the percentage change of all-cause mortality attributable to PM~2.5~ and PM~10~ after adjusting for NO~2~ or SO~2~.  
+
+Further, there is evidence that some health outcomes are nonlinearly related to health outcomes levels [@feng2016impact].  Achieving the three objectives requires a non-linear (or semi-parametric) dose-response curve and a combined-effect multi-pollutant exposure model.  Our bcGAIM model will meet the requirements necessary to fulfil these objectives due to its being able to estimate weights using data, allowing for nonlinear relationships between pollutants and health outcomes, and applicable to both Poisson time series and case-crossover models.
+
+Interpretability of model outputs is another requirement of this project, and many 'unsupervised' methods (i.e. principle components analysis and clustering) are difficult to interpret [@davalos2017current]. A popular nonparametric method is the Bayesian Kernel Machine Regression (BKMR), introduced in @bobb2015bayesian, which models an exposure-response surface via a kernel function. Using a hierarchical Bayesian variable selection method, it can select one pollutant from a group of correlated ones, and is interpreted by visualizing cross-sections of a potentially high-dimensional exposure-response surface.  The bcGAIM will provide some of the flexibility of BKMR and clustering while being sufficiently interpretable to meet the communication needs of an inter-disciplinary research team.
+
+The relationship between daily COVID-19 deaths and air pollution levels has recently become an active area of research. For instance, @wu2020exposure apply a zero-inflated negative binomial to model U.S. data, where the zero-inflation accounts for counties with no COVID-19 deaths. They find that a 1 $\mu$g increase in long-term exposure to ambient PM~2.5~ increases the COVID-19 death rate by 15%.  We will use variations on bcGAIM to examine the relationship between COVID-19 deaths and combinations of air pollutants.  As well as exploring daily variations in the case fatality rate (and its relation to air quality), the model will be adapted to consider long-term exposures and COVID-19 incidence rates.  
+
+
+
+**Methods**
+
+The bcGAIM will make four methodological advancements for modeling the health effects of mixtures of pollutants.  These are:
+
+  1. extending the cGAIM to higher dimensional problems;
+  2. fully exploring the parameter space to identify all plausible values for $\alpha$;
+  3. developing priors for shape-constrained Bayesian inference on the smooth function $s$; and
+  4. using case crossover models in place of the Poisson response variable.
   
-In @pierre2020aim, the cGAIM uses an iterative two-step optimization scheme -- $\alpha$ is updated using a quadratic program, then $s$ is updated using the shape-constrained additive model methodology of @pya2015shape. The bcGAIM will initially be implemented in Stan, a statistical modeling language that performs optimization using Hamiltonian Monte Carlo [@carpenter2017stan]. The Stan modeling language makes it straightforward to extend the bcGAIM to include additional pollutants, additional lags for pollutants in the model, and additional smooth functions $s$. Up to having suitable priors, all 3 extensions only require adding terms to a sum in Stan. Following its implementation in Stan, the bcGAIM will be implemented using non-MCMC inference methods, similar to Iterated Nested Laplace Approximation (INLA) [@rue2009approximate]. These non-MCMC methods provide significant computational and ease-of-use benefits, and will expand the types of problems and number of users who can use the bcGAIM methodology. Finally, to facilitate use by other researchers, all bcGAIM software will be released in an R package.
+In @pierre2020aim, the cGAIM uses an iterative two-step optimization scheme -- $\alpha$ is updated using a quadratic program, then $s$ is updated using the shape-constrained additive model methodology of @pya2015shape. The bcGAIM will initially be implemented in Stan, a statistical modeling language that performs optimization using Hamiltonian Monte Carlo [@carpenter2017stan]. The Stan modeling language makes it straightforward (in theory) to extend the bcGAIM to include additional pollutants, additional lags for pollutants in the model, and additional smooth functions $s$.  It is expected that the $\alpha$ parameters will not always be well identified, and results will be sensitive to model assumptions and prior distributions.  One task in this component of the research will be to find reparametrizations and multivariable prior distributions which enable prior elicitation from subject-area specialists.
 
-Using a Bayesian approach to estimate the health effects of mixtures of pollutants has numerous benefits. Being Bayesian allows us to obtain posterior distributions and credible intervals for all model parameters. This is particularly beneficial with $\alpha$, as different values of $\alpha$ could maximize the posterior. In other words, different combinations of pollutants could have the same effect on health outcomes. It is very important to be able to identify if these different values exist, and what those values are. The practical implication is that an air quality index must consider the value of multiple pollutants when providing guidelines. Furthermore, we could if desired address the multi-modality of $\alpha$ by constructing scientifically justified priors that encourage $\alpha$ towards one of its modes. For example, this could be done if there was evidence from the composition of each pollutant that one was more responsible for the health effects than the others. 
+Following its implementation in Stan, the bcGAIM will be implemented using non-MCMC inference methods, similar to Integrated Nested Laplace Approximation (INLA) [@rue2009approximate].  One such algorithm for single-pollutant case-crossover models was recently developed by @casecrossover, and this approach will be extended to allow for inference on the $\alpha$ parameters in bcGAIM.  These non-MCMC methods provide significant computational and ease-of-use benefits, and will expand the types of problems and number of users who can use the bcGAIM methodology.  To facilitate use by other researchers, all bcGAIM software will be released in an R package.
 
-A major task in developing the bcGAIM is in developing priors for shape-constrained Bayesian inference on $s$. In addition to being free of unwanted behavior, the chosen priors should be simple and interpretable so that non-statistical experts can use it. This is difficult to achieve for shape constraints. The first reason for this is that $s_{i}$ may not have any parameters related to the desired constraint; for example, a 1^st^-order random walk has no parameters related to monotonicity. To overcome this, $s$ could be re-parameterized, the functional form of $s$ could be exploited, or data augmentation schemes that introduce derivative observations could be used [@riihimaki2010gaussian]. The second reason is that substantial mathematical analysis is required to ensure priors do not introduce unwanted behavior. For example, a truncated multivariate normal (tMVN) prior can induce monotonicity when placed on the coefficients $\beta^{'}$ of a finite basis expansion of $s$ [@maatouk2017gaussian]. However, the tMVN prior places negligible mass on near-flat regions of $s$. While @zhou2020truncated remedy this by introducing a scale parameter to the coordinates of the tMVN distribution, the modified tMVN prior is placed on $\beta^{'}$, not $s$. In comparison to the tMVN prior, we seek a prior on $s$ and not its basis expansion. Such a prior will be less encumbered by mathematical details and more easily understood by non-statistical experts. This ease of interpretation should encourage adoption of the bcGAIM among non-statistical experts, one of the goals of the bcGAIM projects.
+After bcGAIM is implemented for a three-dimensional $\alpha$, more specifically ozone, fine particulates, and nitrous oxide at two day lags, additional time lags will be added with the resulting $\alpha$ being 9- or 12 dimensional.  The computational and methodological challenges at this stage are expected to be significant, and parallelizing the algorithm on cloud platforms will be used to dramatically increase the number of candidate values of $\alpha$ considered.
 
-## ADD: Poisson vs. Case Crossover paragraph
+Another major task in developing the bcGAIM is in developing random effect distributions for shape-constrained Bayesian inference on $s$. In addition to having desirable statistical properties, the chosen models should be simple and interpretable so that it can be elicited from non-statistical experts. This is difficult to achieve for shape constraints. The first reason for this is that $s$ may not have any parameters related to the desired constraint; for example, a 1^st^-order random walk has no parameters related to monotonicity. To overcome this, $s$ could be re-parameterized, the functional form of $s$ could be exploited, or data augmentation schemes that introduce derivative observations could be used [@riihimaki2010gaussian]. The second reason is that substantial mathematical analysis is required to ensure priors do not introduce unwanted behavior. For example, a truncated multivariate normal (tMVN) prior can induce monotonicity when placed on the coefficients $\beta^{'}$ of a finite basis expansion of $s$ [@maatouk2017gaussian]. However, the tMVN prior places negligible mass on near-flat regions of $s$. While @zhou2020truncated remedy this by introducing a scale parameter to the coordinates of the tMVN distribution, the modified tMVN prior is placed on $\beta^{'}$, not $s$. In comparison to the tMVN prior, we seek a prior on $s$ and not its basis expansion. Such a prior will be less encumbered by mathematical details and more easily understood by non-statistical experts. This ease of interpretation should encourage adoption of the bcGAIM among non-statistical experts, which is one of the goals of this project.
 
 
-## References 
+
+**References**
 <!-- Source: https://stackoverflow.com/questions/46738721/how-can-i-bring-back-indentation-workaround-in-rmarkdown-pandoc-genuine-referenc -->
 \setlength{\parskip}{1pt}
 <div id="refs"></div>
 \setlength{\parskip}{8pt}
 
 
-
-\newpage 
-# Anticipated roles of trainees (students and post-doctoral fellows)
+\clearpage
+**Anticipated roles of trainees (students and post-doctoral fellows)**
 
 <!-- Limit to 1/2 page. Full details will be included in the full proposal --> 
 
-Kamal will develop the Bayesian implementation of the GAIM models in Stan. This includes exploring determining appropriate prior distributions for the weights $\alpha$, developing visualizations that communicate modeling results, and assisting other project members in developing shape constraints. He will be responsible for producing paper(s) summarizing the results of this model when run on Canadian air pollution and mortality data. To facilitate team communication and cohesion, he will also split time between Toronto (at the Centre for Global Health Research) and Ottawa (at the University of Ottawa), and use the proximity of the University of Ottawa to Quebec to occasionally visit project collaborators located there.
+Kamal Rai will complete his PhD in 2021 and will work on this project as a postdoc.  He will develop the Bayesian implementation of the GAIM models in Stan. This includes exploring determining appropriate prior distributions for the weights $\alpha$, developing visualizations that communicate modeling results, and assisting other project members in developing shape constraints. He will be responsible for producing paper(s) summarizing the results of this model when run on Canadian air pollution and mortality data. To facilitate team communication and cohesion, he will also split time between Toronto (at the Centre for Global Health Research) and Ottawa (at the University of Ottawa), and use the proximity of the University of Ottawa to Quebec to occasionally visit project collaborators located there.
 
-The University of Toronto PhD student will develop non-MCMC methods to conduct inference on the GAIM, and compare its results from those obtained from the Stan implementation. The University of Laval/University of Ottawa PhD student will develop methods to conduct shape-constrained (Bayesian) inference, and examine the relationship between COVID-19 deaths and air pollution levels. 
+The University of Toronto PhD student will develop the INLA-like Bayesian computations to conduct inference on the GAIM, and compare its results from those obtained from the Stan implementation. A University of Laval or University of Ottawa PhD student will develop methods to conduct shape-constrained (Bayesian) inference, and examine the relationship between COVID-19 deaths and air pollution levels. 
 
 
 <!-- 
@@ -154,36 +152,29 @@ The University of Toronto PhD student will develop non-MCMC methods to conduct i
 Not necessary in the LOI. This will be included in the full proposal. 
 --> 
 
-# Plans for dissemination and communication
+**Plans for dissemination and communication**
 
 <!-- Limit to 5 sentences. This will be expanded in a full proposal. -->
 
-The lead investigators of this proposal have a track record of publishing research results in leading statistical and epidemiological journals, and aim to publish the results of this project in high-impact journals. The results and findings of this multiple pollutant inquiry will also be shared with Health Canada and the Institut National de Santé Publique du Québec. 
+The lead investigators of this proposal have a track record of publishing research results in leading statistical and epidemiological journals, and aim to publish the results of this project in high-impact journals. The results and findings of this multiple pollutant inquiry will also be shared with Health Canada and the Institut National de Santé Publique du Québec.   Drs Shin and Campagna will use the methodologies developed in their ongoing research and programatic work, and facilitate the adoption of the methods more widely in their organizations.
 
 
-# Suggested reviewers
+**Suggested reviewers**
 
-Will be contributed by Patrick.
+- Jim Zidek, University of British Columbia. [www.stat.ubc.ca/users/james-v-zidek-frsc-oc](https://www.stat.ubc.ca/users/james-v-zidek-frsc-oc).  Prof. Zidek is one of the world's foremost researchers on statistical method for environmental health.
+- Rhonda Rosychuk, University of Alberta [sites.ualberta.ca/~rhondar](https://sites.ualberta.ca/~rhondar/).  Dr. Rosychuk has published extensively in both the health sciences literature and statistical journals, including on spatial and longitudinal models for environmental health problems.
+- Samir Bhatt, Imperial College London [www.imperial.ac.uk/people/s.bhatt](https://www.imperial.ac.uk/people/s.bhatt), develops Bayesian inferential methods for complex models in public health research.  
 
 
-# Preliminary budget description
+**Preliminary budget description**
 
 <!-- Limit to 1/4 of a page. This will be expanded in a full proposal. --> 
 
-The CANSSI Collaborative Research Team (CRT) grant is for $180,000 over 3 years. We propose the budget:
+The CANSSI Collaborative Research Team grant is for $60,000/year for 3 years. We propose an annual budget of:
 
-  1. \$30,000/year to support a post-doctoral student.
+  1. \$30,000/year to support a post-doctoral fellow.
   2. \$24,000/year to support two PhD students (\$12,000 per student).
   4. \$6,000/year to support travel to/from the cities of the lead investigators -- Toronto, Ottawa, and Quebec -- and annual team meetings held around the Statistical Society of Canada conference.
 
+In addition to the CANSSI funding, Hwashin Shin will provide $15k/year towards the postdoc salary.  This will likely be in the form of research contracts.  
 
-\clearpage
-<!-- Degrees, current position(s), selected peer-reviewed publications (last 6 years), other evidence of impact and contributions (last 6 years), and numbers of undergraduate, master’s level, PhD level and postdoctoral trainees (last 6 years). --> 
-
-<!--
-  \myinput{CV-Brown.pdf}
-  \myinput{CV-Chebana.pdf}
-  \myinput{CV-Feng.pdf}
-  \myinput{CV-Franklin.pdf}
-  \myinput{CV-Shin.pdf}
--->
