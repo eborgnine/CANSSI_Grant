@@ -6,3 +6,5 @@ This repository contains:
 4. journal-of-the-royal-statistical-society.csl	- to format the bibliography.
 5. The 2-page CVs of 5 people listed on the grant. 
 6. CANSSI_LOI.pdf - the full application (including written sections and the CVs)
+
+If you wish to read the LOI, CANSSI_LOI.pdf is file you're looking for.
