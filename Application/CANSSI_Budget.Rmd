@@ -1,0 +1,140 @@
+---
+title: "CANSSI Budget"
+output: pdf_document
+geometry: margin=1in 
+fontsize: 12pt
+documentclass: article
+classoption: letterpaper
+csl: journal-of-the-royal-statistical-society.csl
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+library(tidyverse)
+library(scales)
+```
+
+# Budget 
+
+The table below lists annual income and expenses. It assumes that CANSSI funding over the 3 year period is \$200,000, or \$66,666 per year. 
+
+```{r CANSSI-Budget}
+Income_RowName <- c( "CANSSI",
+                     "Health Canada",
+                     "Centre for Global Health Research",
+                     "NSERC (Discovery, USRA)", 
+                     " ",
+                     "Total" )
+                         
+Income_Amount <- c( scales::dollar(66666),
+                    scales::dollar(20000),
+                    scales::dollar(10000), 
+                    scales::dollar(12000),
+                    " ",
+                    scales::dollar(66666+20000+10000+12000) )
+
+Expenses_RowName <- c( "Postdoctoral Fellow", 
+                       "USRA Students",
+                       "PhD Students",
+                       "Research Assistant Support",
+                       "Travel/Equipment",
+                       "Total" )
+
+Expenses_Amount <- c( scales::dollar(55000),
+                      scales::dollar(12000),
+                      scales::dollar(24000), 
+                      scales::dollar(10000),
+                      scales::dollar(8000-334),
+                      scales::dollar(55000+12000+24000+10000+8000-334) )
+
+Budget_Table <- cbind( Income_RowName, Income_Amount, 
+                       Expenses_RowName, Expenses_Amount )
+colnames(Budget_Table) = c("Income", "", "Expenses", " ")
+
+knitr::kable( Budget_Table , longtable = TRUE, booktabs = TRUE, 
+              format = "latex",  label = "Budget-Table" ) %>%
+kableExtra::kable_styling(latex_options = c("hold_position", "repeat_header")) %>%
+kableExtra::row_spec(5, hline_after = TRUE)
+```
+
+CGHR's contribution will be in-kind: they will pay the research assistant directly. 
+
+The Health Canada contribution will be towards the postdoctoral student. 
+
+CANSSI is whatever is left over.
+
+\clearpage
+# Organization 
+
+\underline{Principal Investigators}
+
+1. Name: Patrick E. Brown $\\$
+Title: Scientist and Associate Professor $\\$
+Affiliations 
+    + The Centre for Global Health Research, St. Michael's Hospital. Toronto, Ontario. 
+    + The Department of Statistical Sciences, University of Toronto. Toronto, Ontario. $\\$
+
+
+2. Name: Cindy Feng $\\$
+Title: Associate Professor $\\$
+Affiliation 
+    + Department of Community Health and Epidemiology, Dalhousie University. Halifax, Nova Scotia. $\\$
+
+3. Name: Meredith Franklin  $\\$
+Title: Associate Professor $\\$
+Affiliations 
+    + Keck School of Medicine, University of Southern California (until July 2021). Los Angeles, California. 
+    + School of the Environment and Department of Statistical Sciences, University of Toronto (from July 2021). Toronto, Ontario. $\\$
+
+4. Name: Fateh Chenaba $\\$
+Title: Professor $\\$
+Affiliation 
+    + Centre Eau Terre Environnement, Institut national de la recherche scientifique. Québec City, Quebec. 
+    + Laval University ? $\\$
+
+
+\clearpage
+\underline{Collaborators}
+
+1. Name: Hwashin Shin $\\$
+Title: Scientist. $\\$
+Affiliation 
+    + Environmental Health Science and Research Bureau, Health Canada. Ottawa, Ontario. $\\$
+
+2. Name: Céline Campagna $\\$
+Title: Responsable scientifique $\\$
+Affiliation
+    + Équipe Changements climatiques et santé, Institut National de Santé Publique du Québec. Quebec City, Quebec. $\\$
+
+3. Name: Pierre Masselot $\\$
+Title: Research Fellow $\\$
+Affiliation 
+    + London School of Hygiene & Tropical Medicine. London, United Kingdom $\\$
+
+4. Name: Prabhat Jha $\\$
+Title: Director of the Centre for Global Health Research and University Professor $\\$
+Affiliation 
+    + Center of Global Health Research, St. Michael's Hospital. Toronto, Ontario. 
+    + Professor, Dalla Lana School of Public Health, University of Toronto. Toronto, Ontario. $\\$
+
+
+\clearpage
+
+
+
+\underline{Trainees}
+
+1. One CRT-Funded Postdoctoral Student
+
+Kamal will complete his PhD in 2021 and will work on this project as a postdoctoral student  He will develop the Bayesian implementation of the GAIM models in Stan. This includes exploring appropriate prior distributions for the weights $\alpha$, developing visualizations that communicate the modeling results, and assisting other project members in developing shape constraints. He will be responsible for producing paper(s) summarizing the results of this model when run on Canadian air pollution and mortality data. To facilitate team communication and cohesion, he will also split time between Toronto (at the Centre for Global Health Research) and Halifax (at the University of Dalhousie). He will also make occasional trips to Ottawa and the Quebec to visit project collaborators located in these regions. 
+
+While in Toronto, Halifax, and the Quebec region he will be supervised by the principal investigators in those locations. To further aid project coordination, the project team at each location will hold weekly meetings, and the entire project team will hold (virtual) monthly meetings. In addition, we will meet in person once per year at or around the SSC conference.
+
+2. Two PhD Students - University of Toronto and (Laval University or Dalhousie)
+
+The University of Toronto PhD student will develop INLA-like Bayesian computation methods to conduct inference on the GAIM, and compare its results from those obtained from the Stan implementation. A University of Laval or University of Dalhousie PhD student will develop methods to conduct shape-constrained (Bayesian) inference, and examine the relationship between COVID-19 deaths and air pollution levels. 
+
+3. Two USRA Students
+
+These students will contribute to the projects attached to the postdoctoral and PhD students. (This section needs more details)
