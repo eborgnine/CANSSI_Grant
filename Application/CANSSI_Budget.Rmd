@@ -1,69 +1,163 @@
 ---
-title: "CANSSI Budget"
-output: pdf_document
+title: ""
+output: 
+    pdf_document:
+        keep_tex: true
+header-includes:  
+    - \usepackage{geometry} 
+    - \usepackage{array, makecell}
 geometry: margin=1in 
 fontsize: 12pt
+font: Times New Roman
 documentclass: article
 classoption: letterpaper
-csl: journal-of-the-royal-statistical-society.csl
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
-
 library(tidyverse)
-library(scales)
 ```
 
-# Budget 
+## CANSSI: Draft Budget 
 
-The table below lists annual income and expenses. It assumes that CANSSI funding over the 3 year period is \$200,000, or \$66,666 per year. 
+The table below lists income and expenses for each of the three years of the project. This budget assumes that CANSSI funding over the 3 year period is \$200,000. 
 
-```{r CANSSI-Budget}
-Income_RowName <- c( "CANSSI",
-                     "Health Canada",
-                     "Centre for Global Health Research",
-                     "NSERC (Discovery, USRA)", 
-                     " ",
-                     "Total" )
-                         
-Income_Amount <- c( scales::dollar(66666),
-                    scales::dollar(20000),
-                    scales::dollar(10000), 
-                    scales::dollar(12000),
-                    " ",
-                    scales::dollar(66666+20000+10000+12000) )
+```{r CANSSI-Budget-Yearly-Breakdown}
+Expenses <- t( data.frame( "Postdoctoral Fellow", 
+                           "Postdoctoral Fellow", 
+                           "Graduate Students",
+                           "Graduate Students",
+                           "Graduate Students",
+                           "\\makecell[l]{Undergraduate \\\\ Summer Students}",
+                           "\\makecell[l]{Undergraduate \\\\ Summer Students}",
+                           "Research Assistant",
+                           "INSPQ Staff Time",
+                           "Travel/Equipment",
+                           "\\textbf{Total}" ) )
 
-Expenses_RowName <- c( "Postdoctoral Fellow", 
-                       "USRA Students",
-                       "PhD Students",
-                       "Research Assistant Support",
-                       "Travel/Equipment",
-                       "Total" )
+Contributions_1_Names <- t( data.frame( "HC",
+                                        "CANSSI",
+                                        "CANSSI", 
+                                        "INRS", 
+                                        "NSERC", 
+                                        "USRA",
+                                        "DG",
+                                        "CGHR",
+                                        "INSPQ",
+                                        "CANSSI",
+                                        " " ) )
 
-Expenses_Amount <- c( scales::dollar(55000),
-                      scales::dollar(12000),
-                      scales::dollar(24000), 
-                      scales::dollar(10000),
-                      scales::dollar(8000-334),
-                      scales::dollar(55000+12000+24000+10000+8000-334) )
+Contributions_1_Names[1] <- paste0("HC\\textbf{", kableExtra::footnote_marker_number(1), "}" )
+Contributions_1_Names[4] <- paste0("INRS\\textbf{", kableExtra::footnote_marker_number(2), "}" )
+Contributions_1_Names[5] <- paste0("NSERC\\textbf{", kableExtra::footnote_marker_number(3), "}" )
+Contributions_1_Names[6] <- paste0("USRA\\textbf{", kableExtra::footnote_marker_number(4), "}" )
+Contributions_1_Names[7] <- paste0("DG\\textbf{", kableExtra::footnote_marker_number(5), "}" )
+Contributions_1_Names[8] <- paste0("CGHR\\textbf{", kableExtra::footnote_marker_number(6), "}" )
+Contributions_1_Names[9] <- paste0("INSPQ\\textbf{", kableExtra::footnote_marker_number(7), "}" )
 
-Budget_Table <- cbind( Income_RowName, Income_Amount, 
-                       Expenses_RowName, Expenses_Amount )
-colnames(Budget_Table) = c("Income", "", "Expenses", " ")
+Contributions_23_Names <- t( data.frame( "HC",
+                                        "CANSSI",
+                                        "CANSSI", 
+                                        "INRS", 
+                                        "NSERC", 
+                                        "USRA",
+                                        "DG",
+                                        "CGHR",
+                                        "INSPQ",
+                                        "CANSSI",
+                                        " " ) )
 
-knitr::kable( Budget_Table , longtable = TRUE, booktabs = TRUE, 
-              format = "latex",  label = "Budget-Table" ) %>%
-kableExtra::kable_styling(latex_options = c("hold_position", "repeat_header")) %>%
-kableExtra::row_spec(5, hline_after = TRUE)
+Contributions_1_Amounts <- t( data.frame ( "\\$20,000",
+                                           "\\$35,000", 
+                                           "\\$24,000",
+                                           "\\$10,000",
+                                           "\\$7,000",
+                                           "\\$9,000", 
+                                           "\\$3,000",
+                                           "\\$10,000",
+                                           "\\$10,000",
+                                           "\\$7,000",
+                                           "\\textbf{\\$135,000}" ) )
+
+Contributions_2_Amounts <- t( data.frame ( "\\$20,000",
+                                           "\\$35,000", 
+                                           "\\$24,000",
+                                           "\\$10,000",
+                                           "\\$7,000",
+                                           "\\$9,000", 
+                                           "\\$3,000",
+                                           "\\$10,000",
+                                           "\\$10,000",
+                                           "\\$7,000",
+                                           "\\textbf{\\$135,000}" ) ) 
+
+Contributions_3_Amounts <- t( data.frame ( "\\$20,000",
+                                           "\\$35,000", 
+                                           "\\$24,000",
+                                           "\\$10,000",
+                                           "\\$7,000",
+                                           "\\$9,000", 
+                                           "\\$3,000",
+                                           "\\$10,000",
+                                           "\\$10,000",
+                                           "\\$9,000",
+                                           "\\textbf{\\$137,000}" ) ) 
+
+Budget_Table <- cbind( Expenses, Contributions_1_Names, Contributions_1_Amounts,
+                       Contributions_23_Names, Contributions_2_Amounts,
+                       Contributions_23_Names, Contributions_3_Amounts)
+colnames(Budget_Table) = c( "", "\\textbf{Year 1}", " ", "\\textbf{Year 2}", " ", "\\textbf{Year 3}", " ")
+rownames(Budget_Table) = NULL 
+
+knitr::kable( Budget_Table , longtable = TRUE, booktabs = TRUE, escape = FALSE, 
+              format = "latex",  label = "Budget-Table", align = c("l","l","r", "l","r", "l","r") ) %>%
+kableExtra::row_spec(0, align = "l") %>%
+kableExtra::column_spec( c(1,3,5,7), border_right = TRUE) %>%
+kableExtra::column_spec( c(1,2), border_left = TRUE) %>%
+kableExtra::collapse_rows(columns = 1) %>%
+kableExtra::add_header_above( c("Annual Expenses" = 1, "Contributions" = 6) ) %>%
+kableExtra::footnote(number = c( "HC: Health Canada", "INRS: Institut national de la recherche scientifique", "NSERC: The Natural Sciences and Engineering Research Council of Canada", "USRA: NSERC Undergraduate Student Research Award", "DG: NSERC Discovery Grant", "CHGR: Centre for Global Health Research", "INSPQ: Institut national de santé publique du Québec (Quebec Public Health Institute)" ))
 ```
 
-CGHR's contribution will be in-kind: they will pay the research assistant directly. 
+\vspace{-1em}
+\underline{Annual Expenses}
 
-The Health Canada contribution will be towards the postdoctoral student. 
+\begin{enumerate}
+    \item Postdoctoral Fellow: The postdoctoral fellow will be funded from the CANSSI CRT grant and Health Canada. He will help organize team meetings, split time between Toronto and Halifax, and help onboard other students as they join the project. 
+    
+    \item Graduate Students: 1 PhD student and 1 Master's student will be involved in this project. One of the graduate students will be based at INRS, the other will be at the University of Toronto or Dalhousie University.  
 
-CANSSI is whatever is left over.
+    \item URSA Students: This project will have a number of self-contained projects suitable for undergraduate research assistants. We intend to involve 2 URSAs at \$6,000/year each, whose work will directly contribute to the project's research aims.
+    
+    \item Research Assistant: Hana Fu at CGHR will contribute roughly 3 days/month to the project. She will help maintain project data files and perform preliminary analysis. 
+    
+    \item INSPQ Staff Time: Céline Campagna at INSPQ will devote 0.5 days/week to the project. 
+    
+    \item Travel/Equipment: The travel expenses will cover attending conferences and travel between the three institutions by the project trainees. The equipment spending is intended to cover new computing equipment or cloud computing costs. 
+\end{enumerate}
 
+\underline{Contributions}
+
+\begin{enumerate}
+    \item CANSSI: The CANSSI funding is \$200,000 over three years, or \$66,666 per year. 
+    
+    \item Health Canada: Health Canada will contribute \$20,000 per year via research contracts. 
+    
+    \item INRS: Fateh Chebana will contribute \$10,000 in graduate student funding.
+    
+    \item NSERC: Cindy Feng will contribute \$7,000/year in graduate student funding. 
+    
+    \item INSPQ: The INSPQ will contribute staff time to the project, estimated at \$10,000/year for 3 years.
+    
+    \item CGHR: CGHR's support will be in-kind, in the form of funding the research assistant and providing research facilities.
+    
+    \item Undergraduate Summer Students: Two USRAs will be applied for each year, which will pay for undergraduate summer students. NSERC also requires a contribution from the Discovery Grant of the supervisor. 
+\end{enumerate}
+
+
+
+
+<!--
 \clearpage
 # Organization 
 
@@ -138,3 +232,5 @@ The University of Toronto PhD student will develop INLA-like Bayesian computatio
 3. Two USRA Students
 
 These students will contribute to the projects attached to the postdoctoral and PhD students. (This section needs more details)
+
+-->
