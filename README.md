@@ -9,4 +9,4 @@ The LOI folder contains:
 5. The 2-page CVs of 5 people listed on the grant. 
 6. CANSSI_LOI.pdf - the full application (including written sections and the CVs)
 
-If you wish to read the LOI, CANSSI_LOI.pdf is file you're looking for.
+If you wish to read the LOI, CANSSI_LOI_Complete.pdf is file you're looking for.
