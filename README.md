@@ -1,4 +1,4 @@
-The Letter of Submission file has been added to the main directory.
+The Letter of Submission files (.pdf and .rmd) have been added to the main directory.
 
 The LOI folder contains:
 
