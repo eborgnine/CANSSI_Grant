@@ -1,4 +1,6 @@
-This repository contains:
+The Letter of Submission file has been added to the main directory.
+
+The LOI folder contains:
 
 1. CANSSI_Grant.Rmd - the source document that the proposal was written in. 
 2. CANSSI_Grant.bib - a list of bibliographic references, shown in the .pdf file.
